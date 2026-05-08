@@ -354,7 +354,7 @@
         let tagTxt = LOCALE.modeEasy;
         if(currentMode === 'HARD') tagTxt = LOCALE.modeHard;
         if(currentMode === 'EXTREME') tagTxt = LOCALE.modeExtreme;
-        document.getElementById('mode-tag').innerText = tagTxt;
+        if (modeTag) modeTag.innerText = tagTxt;
 
         update();
         requestAnimationFrame(draw);
