@@ -87,14 +87,31 @@
         }
 
         .btn-action { 
-            width: 80%; max-width: 300px; padding: 14px; margin: 8px; 
-            border: none; border-radius: 50px; font-family: 'Kanit'; 
-            font-weight: 800; cursor: pointer; text-decoration: none; 
-            display: flex; justify-content: center; align-items: center; font-size: 1.2rem;
+            width: 85%; 
+            max-width: 320px; 
+            padding: 10px;       /* 16px -> 10px로 축소 */
+            margin: 5px;         /* 8px -> 5px로 축소 */
+            border: none; 
+            border-radius: 50px; 
+            font-family: 'Kanit'; 
+            font-weight: 800; 
+            cursor: pointer; 
+            text-decoration: none; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 1.1rem;   /* 1.3rem -> 1.1rem으로 축소 */
         }
+        /* FECHAR 버튼 전용 (회색 배경) */
+        .btn-close { 
+            background: #888888; 
+            color: white; 
+        }
+        
         .btn-retry { background: var(--brazil-yellow); color: var(--primary-blue); }
         .btn-whatsapp { background: var(--whatsapp-green); color: white; }
         .btn-link { background: var(--primary-blue); color: white; font-size: 0.9rem; border: 1.5px solid var(--brazil-yellow); }
+
         /* --- 랭킹 시스템 추가 스타일 --- */
         .btn-ranking { 
             background: #ffffff; 
@@ -118,8 +135,9 @@
         }
         
         .rank-table-wrapper {
-            max-height: 250px; overflow-y: auto; margin: 15px 0;
-            border-radius: 15px; background: rgba(255,255,255,0.5);
+            max-height: 200px; /* 버튼 공간 확보를 위해 살짝 축소 */
+            overflow-y: auto;
+            margin: 10px 0;
         }
         
         .rank-table { width: 100%; border-collapse: collapse; }
@@ -170,10 +188,10 @@
 
 <div id="modal-rank-input" class="modal-overlay">
     <div class="rank-box">
-        <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue)">NOVO RECORD!</h2>
-        <input type="text" id="nickname" class="input-nickname" placeholder="Seu Nickname" maxlength="10">
+        <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue); margin-bottom:10px;">NOVO RECORDE!</h2>
+        <input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10">
         <button class="btn-action btn-retry" onclick="submitScore()" style="width:100%">ENVIAR</button>
-        <button onclick="closeModal('modal-rank-input')" style="background:none; border:none; margin-top:10px; cursor:pointer">Fechar</button>
+        <button class="btn-action btn-close" onclick="closeModal('modal-rank-input')" style="width:100%">FECHAR</button>
     </div>
 </div>
 
