@@ -54,7 +54,8 @@
             font-family: 'Luckiest Guy'; 
             color: var(--brazil-yellow);
             -webkit-text-stroke: 3px var(--primary-blue); 
-            text-shadow: 8px 8px 0px rgba(0,0,0,0.2);
+            /* 수정: 번짐 값을 0으로 고정하여 아우라 제거, 오프셋을 줄여 깔끔하게 */
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.3); /* 더 선명하고 짙은 하드 섀도우 */
         }
         #countdown-mode { font-size: 2rem; color: white; margin-bottom: 10px; }
         #countdown-msg { font-size: 3rem; margin-bottom: 10px; color: white; }
