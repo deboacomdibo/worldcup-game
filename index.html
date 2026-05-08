@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dibo: Rumo ao Hexa! v4.0</title>
+    <title>Dibo: Rumo ao Hexa! v4.1</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Kanit:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
 
@@ -27,7 +27,6 @@
 
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 100; background: rgba(0,0,0,0.5); }
 
-        /* 인트로 박스 (Glassmorphism) */
         .glass-box {
             background: var(--glass-bg);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -46,7 +45,6 @@
             box-shadow: 0 5px 20px rgba(0,39,118,0.5); transition: 0.3s;
         }
 
-        /* [UI] 카운트다운 및 안내 문구 */
         #countdown-overlay {
             display: none; flex-direction: column; z-index: 150;
             font-family: 'Luckiest Guy'; text-align: center; color: var(--brazil-yellow);
@@ -55,19 +53,16 @@
         #countdown-msg { font-size: 4rem; margin-bottom: 20px; color: white; -webkit-text-stroke: 2px var(--primary-blue); }
         #countdown-num { font-size: 10rem; }
 
-        /* HUD */
         #hud { position: absolute; top: 30px; width: 100%; text-align: center; pointer-events: none; z-index: 50; }
         #score-board { font-family: 'Luckiest Guy'; font-size: 5rem; margin: 0; color: var(--brazil-yellow); -webkit-text-stroke: 2.5px var(--primary-blue); }
         #combo-board { font-size: 1.8rem; color: #ffffff; background: rgba(0,0,0,0.3); display: inline-block; padding: 5px 20px; border-radius: 30px; font-weight: 800; margin-top: 5px; transition: transform 0.1s ease-out; }
 
-        /* 판정 */
         #judgment-text {
             position: absolute; width: 100%; text-align: center; top: 35%;
             font-family: 'Luckiest Guy'; font-size: 3.5rem; opacity: 0; 
             pointer-events: none; z-index: 60; -webkit-text-stroke: 1.5px var(--primary-blue);
         }
 
-        /* 게임 오버 */
         #game-over {
             display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.9); flex-direction: column; justify-content: center;
@@ -122,30 +117,23 @@
 </div>
 
 <script>
-    /**
-     * 🚩 [수정 가능 구역] 텍스트 및 설정
-     */
     const LOCALE = {
         introTitle: "COMO JOGAR",
-        introDesc: "Toque na tela quando a bola\nchegar na boné do DIBO!\n\nPERFEITO: 10 pts / BOM: 5 pts\nA cada 10 combos: +20 pts!\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO \nde um lado ao outro!",
+        introDesc: "Toque na cabeça do Dibo!\nPERFEITO: 10 pts / BOM: 5 pts\nA cada 10 combos: +20 pts!\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO \nde um lado ao outro!",
         btnPlay: "JOGAR AGORA",
-        
-        // 단계별 안내 문구
         msgEasy: "TOQUE NA TELA!",
         msgHard: "AGORA, MEXA DIBO!",
         msgExtreme: "MEXA DIBO MAIS RÁPIDO!",
-        
         modeEasy: "MODO: EASY",
         modeHard: "MODO: DIFÍCIL",
         modeExtreme: "MODO: EXTREMO",
-        
         overTitle: "SÓ VAMOS!",
-        overSub: "Rumo ao Hexa!!!",
+        overSub: "Rumo ao Hexa⚽",
         btnRetry: "JOGAR DE NOVO",
         btnShare: "COMPARTILHAR",
-        btnLink: "Ainda não conhece o Dibo? 👀",
+        btnLink: "Ainda não conhece o Dibo?👀",
         linkUrl: "https://www.instagram.com/deboacomdibo",
-        shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no Dibo: Rumo ao Hexa⚽ Consegue me superar?`
+        shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no DIBO: Rumo ao Hexa⚽ Consegue me superar?`
     };
 
     function initTexts() {
@@ -171,19 +159,22 @@
     const scoreEl = document.getElementById('score-board');
     const comboEl = document.getElementById('combo-board');
 
-    // [수정] 이미지 객체 생성 및 초기화 부분
+    // 이미지 객체 생성 (중복 선언 해결)
     const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
     images.idle.src = 'dibo_idle.png'; 
     images.hit.src = 'dibo_hit.png'; 
     images.fail.src = 'dibo_fail.png'; 
     images.ball.src = 'ball.png';
 
-    // [수정] currentDiboImg가 처음부터 idle을 가리키도록 설정
-    let currentDiboImg = images.idle;
-
-    let score = 0; let combo = 0; let maxCombo = 0; let isGameOver = false; 
-    let gameState = 'INTRO'; // INTRO, SEQUENCE, PLAYING
-    let currentDiboImg = images.idle; let particles = []; let balls = [];
+    // 게임 상태 변수
+    let score = 0; 
+    let combo = 0; 
+    let maxCombo = 0; 
+    let isGameOver = false; 
+    let gameState = 'INTRO'; 
+    let currentDiboImg = images.idle; 
+    let particles = []; 
+    let balls = [];
     let currentMode = 'EASY';
 
     const GRAVITY = { EASY: 0.35, HARD: 0.4, EXTREME: 0.4 };
@@ -197,7 +188,6 @@
     }
     window.addEventListener('resize', resize); resize();
 
-    // [중요] 통합 시퀀스 로직 (안내문구 1초 -> 3,2,1 카운트다운)
     function triggerSequence(type) {
         gameState = 'SEQUENCE';
         document.getElementById('intro-screen').style.display = 'none';
@@ -211,7 +201,6 @@
         
         countdownMsg.innerText = msg;
 
-        // 1초 뒤에 3,2,1 시작
         setTimeout(() => {
             countdownMsg.innerText = "READY?";
             countdownNum.style.display = 'block';
@@ -226,10 +215,9 @@
                     clearInterval(timer);
                     countdownOverlay.style.display = 'none';
                     gameState = 'PLAYING';
-                    // 기존 공들 제거 후 새로 생성
                     balls = [];
                     spawnBall();
-                    if(currentMode === 'EXTREME') spawnBall(800); // 익스트림은 공 2개
+                    if(currentMode === 'EXTREME') spawnBall(800);
                 }
             }, 1000);
         }, 1000);
@@ -249,8 +237,6 @@
     function handleInput(e) {
         if (gameState !== 'PLAYING' || isGameOver) return;
         const inputX = (e.touches ? e.touches[0].clientX : e.clientX);
-        
-        // EASY 제외한 모드에서 캐릭터 이동
         if (currentMode !== 'EASY') {
             dibo.targetX = inputX - dibo.w / 2;
         }
@@ -306,8 +292,6 @@
 
     function update() {
         if (gameState !== 'PLAYING' || isGameOver) return;
-        
-        // 캐릭터 이동 (EASY가 아닐 때만 부드럽게 추적)
         if (currentMode !== 'EASY') {
             dibo.x += (dibo.targetX - dibo.x) * 0.18;
         }
@@ -316,11 +300,7 @@
             ball.sy += GRAVITY[currentMode];
             ball.x += ball.sx; ball.y += ball.sy;
             if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.sx *= -1;
-            
-            // 땅에 닿으면 종료
             if (ball.y > canvas.height - 50) endGame();
-
-            // 리프팅 성공 시 하늘 위로 사라진 공 리스폰 로직 (익스트림 대응)
             if (ball.sy < 0 && ball.y < -150) {
                 balls.splice(idx, 1);
                 spawnBall(200);
@@ -336,22 +316,19 @@
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // [보정] 현재 그려야 할 이미지 결정
+        // 캐릭터 그리기 (안전장치 강화)
         let drawImg = isGameOver ? images.fail : currentDiboImg;
-        if (!drawImg) drawImg = images.idle; // 방어 코드
-    
-        // [보정] 이미지가 있으면 그리고, 없으면 갈색 사각형으로 표시
+        if (!drawImg) drawImg = images.idle;
+
         if (drawImg.complete && drawImg.naturalWidth !== 0) {
             ctx.drawImage(drawImg, dibo.x, dibo.y, dibo.w, dibo.h);
         } else {
-            // 이미지 로딩 실패 시 나타나는 임시 박스 (디보 크기)
-            ctx.fillStyle = 'rgba(139, 69, 19, 0.5)'; // 반투명 갈색
+            // 이미지 로딩 실패 시 갈색 박스 표시 (디버깅용)
+            ctx.fillStyle = 'rgba(139, 69, 19, 0.5)';
             ctx.fillRect(dibo.x, dibo.y, dibo.w, dibo.h);
-            ctx.fillStyle = 'white';
-            ctx.fillText('Carregando Dibo...', dibo.x + 50, dibo.y + 100);
         }
 
-        // 공 그리기 부분
+        // 공 그리기
         balls.forEach(ball => {
             ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.x * 0.03);
             if (images.ball.complete && images.ball.naturalWidth !== 0) {
@@ -372,7 +349,6 @@
         scoreEl.innerText = score;
         comboEl.innerText = `COMBO ${combo}`;
         
-        // 모드 태그 업데이트
         let tagTxt = LOCALE.modeEasy;
         if(currentMode === 'HARD') tagTxt = LOCALE.modeHard;
         if(currentMode === 'EXTREME') tagTxt = LOCALE.modeExtreme;
@@ -408,6 +384,7 @@
 
     function resetGame() { location.reload(); }
 
+    // 초기 실행
     draw();
 </script>
 </body>
