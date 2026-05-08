@@ -146,12 +146,42 @@
             z-index: 300; justify-content: center; align-items: center;
         }
         
+        /* 랭킹 등록 모달 박스 */
         .rank-box {
-            background: rgba(255, 255, 255, 0.8); 
+            background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 35px; padding: 30px; width: 85%; max-width: 360px; 
-            text-align: center; border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 35px; 
+            padding: 25px; 
+            width: 85%; 
+            max-width: 340px; 
+            
+            /* [핵심] 내부 요소들을 세로로 쌓고 가로 중앙 정렬 */
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+            
+            border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        /* 모달 내부의 입력창 */
+        .input-nickname {
+            width: 90%; /* 박스 너비에 맞춤 */
+            padding: 12px; 
+            border-radius: 15px; 
+            border: 1px solid rgba(0,0,0,0.1);
+            margin-bottom: 15px; 
+            font-family: 'Kanit'; 
+            font-size: 1.1rem; 
+            text-align: center;
+            outline: none;
+        }
+        
+        /* 모달 내부의 버튼들 전용 */
+        .rank-box .btn-action {
+            width: 90% !important;  /* 너비를 입력창과 맞춤 */
+            margin: 5px 0 !important; /* 위아래 간격만 유지, 가로는 자동 중앙 */
+            height: 45px;
         }
         
         .rank-table-wrapper {
@@ -163,12 +193,6 @@
         .rank-table { width: 100%; border-collapse: collapse; }
         .rank-table th { position: sticky; top: 0; background: var(--primary-blue); color: white; padding: 8px; font-size: 0.8rem; }
         .rank-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem; color: #333; }
-        
-        .input-nickname {
-            width: 100%; padding: 15px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1);
-            margin-bottom: 20px; font-family: 'Kanit'; font-size: 1.1rem; text-align: center;
-            box-sizing: border-box; outline: none;
-        }
     </style>
 </head>
 <body>
@@ -209,10 +233,10 @@
 
 <div id="modal-rank-input" class="modal-overlay">
     <div class="rank-box">
-        <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue); margin-bottom:10px;">NOVO RECORDE!</h2>
-        <input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10">
-        <button class="btn-action btn-retry" onclick="submitScore()" style="width:100%">ENVIAR</button>
-        <button class="btn-action btn-close" onclick="closeModal('modal-rank-input')" style="width:100%">FECHAR</button>
+        <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue); margin-bottom:15px;">NOVO RECORDE!</h2>
+        <input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10">   
+        <button class="btn-action btn-retry" onclick="submitScore()">ENVIAR</button>    
+        <button class="btn-action btn-close" onclick="closeModal('modal-rank-input')">FECHAR</button>
     </div>
 </div>
 
