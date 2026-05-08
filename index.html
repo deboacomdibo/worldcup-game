@@ -485,18 +485,25 @@
         body.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
     
         try {
-            const resp = await fetch(scriptUrl);
+            // 캐시 방지를 위해 랜덤 쿼리 추가
+            const resp = await fetch(scriptUrl + "?t=" + new Date().getTime());
             const ranks = await resp.json();
             
             body.innerHTML = "";
+            if (ranks.length === 0) {
+                body.innerHTML = "<tr><td colspan='4'>Nenhum recorde ainda!</td></tr>";
+                return;
+            }
+    
             ranks.forEach((row, idx) => {
-                if(idx >= 50) return; // 상위 50명만 표시
+                if(idx >= 50) return;
                 const tr = document.createElement('tr');
                 const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : idx + 1;
                 tr.innerHTML = `<td>${medal}</td><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>`;
                 body.innerHTML += tr.outerHTML;
             });
         } catch (e) {
+            console.error("Ranking Error:", e);
             body.innerHTML = "<tr><td colspan='4'>Erro ao carregar ranking.</td></tr>";
         }
     }
