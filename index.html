@@ -191,8 +191,24 @@
         }
         
         .rank-table { width: 100%; border-collapse: collapse; }
-        .rank-table th { position: sticky; top: 0; background: var(--primary-blue); color: white; padding: 8px; font-size: 0.8rem; }
-        .rank-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem; color: #333; }
+        .rank-table th { 
+        position: sticky; 
+        top: 0; 
+        background: var(--primary-blue); 
+        color: white; 
+        padding: 8px; 
+        font-size: 0.8rem; 
+        text-align: center !important; /* 헤더 가운데 정렬 */
+        }
+    
+        .rank-table td { 
+            padding: 10px; 
+            border-bottom: 1px solid rgba(0,0,0,0.05); 
+            font-size: 0.9rem; 
+            color: #333; 
+            text-align: center !important; /* 셀 내용 가운데 정렬 */
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
@@ -225,7 +241,7 @@
         <h2 id="txt-over-sub" style="margin-top: 0; font-weight: 800;"></h2>
         <p id="final-result" style="font-size: 1.5rem; margin: 20px 0; font-weight: 800; white-space: pre-line;"></p>
         <button class="btn-action btn-retry" onclick="resetGame()">JOGAR DE NOVO</button>
-        <button class="btn-action btn-ranking" onclick="openRankingInput()" id="btn-save-rank">SALVAR SCORE</button> 
+        <button class="btn-action btn-ranking" onclick="openRankingInput()" id="btn-save-rank">SALVAR RECORDE</button> 
         <button class="btn-action btn-whatsapp" id="share-wa">COMPARTILHAR</button>
         <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')">
             </button>
@@ -263,7 +279,7 @@
         overSub: "Rumo ao Hexa⚽",
         btnRetry: "JOGAR DE NOVO",
         btnShare: "COMPARTILHAR",
-        btnLink: "Ainda não conhece o Dibo?👀",
+        btnLink: "Ainda não conhece o DIBO?👀",
         linkUrl: "https://www.instagram.com/deboacomdibo",
         shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no DIBO: Rumo ao Hexa⚽ Consegue me superar?`
     };
@@ -542,7 +558,7 @@
     async function showRankingBoard() {
         document.getElementById('modal-rank-board').style.display = 'flex';
         const body = document.getElementById('rank-list-body');
-        body.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
+        body.innerHTML = "<tr><td colspan='4' style='text-align:center; padding: 20px;'>Carregando...</td></tr>";
     
         try {
             // 캐시 방지를 위해 랜덤 쿼리 추가
