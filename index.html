@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dibo: Rumo ao Hexa! v3.8</title>
+    <title>Dibo: Rumo ao Hexa! v4.0</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Kanit:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
 
@@ -25,9 +25,9 @@
 
         canvas { display: block; touch-action: none; }
 
-        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 100; background: rgba(0,0,0,0.4); }
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 100; background: rgba(0,0,0,0.5); }
 
-        /* 인트로 박스 */
+        /* 인트로 박스 (Glassmorphism) */
         .glass-box {
             background: var(--glass-bg);
             backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -46,21 +46,14 @@
             box-shadow: 0 5px 20px rgba(0,39,118,0.5); transition: 0.3s;
         }
 
-        /* 모드 전환 알림 */
-        #mode-change-screen {
-            display: none; z-index: 200; background: rgba(0, 39, 118, 0.7);
-            flex-direction: column; text-align: center; color: white;
-        }
-        #mode-change-screen h1 { font-family: 'Luckiest Guy'; font-size: 3rem; color: var(--brazil-yellow); margin-bottom: 10px; -webkit-text-stroke: 2px white; }
-        #mode-change-screen h2 { font-size: 4rem; font-weight: 800; margin: 0; }
-
-        /* 카운트다운 */
+        /* [UI] 카운트다운 및 안내 문구 */
         #countdown-overlay {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            justify-content: center; align-items: center; z-index: 150;
-            font-family: 'Luckiest Guy'; font-size: 9rem; color: var(--brazil-yellow);
-            -webkit-text-stroke: 3px var(--primary-blue);
+            display: none; flex-direction: column; z-index: 150;
+            font-family: 'Luckiest Guy'; text-align: center; color: var(--brazil-yellow);
+            -webkit-text-stroke: 3px var(--primary-blue); text-shadow: 8px 8px 0px rgba(0,0,0,0.2);
         }
+        #countdown-msg { font-size: 4rem; margin-bottom: 20px; color: white; -webkit-text-stroke: 2px var(--primary-blue); }
+        #countdown-num { font-size: 10rem; }
 
         /* HUD */
         #hud { position: absolute; top: 30px; width: 100%; text-align: center; pointer-events: none; z-index: 50; }
@@ -99,16 +92,14 @@
         <div class="glass-box">
             <h2 id="txt-intro-title"></h2>
             <p id="txt-intro-desc"></p>
-            <button class="btn-play" onclick="startSequence()" id="txt-btn-play"></button>
+            <button class="btn-play" onclick="triggerSequence('START')" id="txt-btn-play"></button>
         </div>
     </div>
 
-    <div id="mode-change-screen" class="overlay">
-        <h1 id="txt-mode-change-title">NOVO MODO</h1>
-        <h2 id="txt-new-mode-name">DIFÍCIL</h2>
+    <div id="countdown-overlay" class="overlay">
+        <div id="countdown-msg">READY?</div>
+        <div id="countdown-num">3</div>
     </div>
-
-    <div id="countdown-overlay">3</div>
 
     <div id="hud">
         <p id="score-board">0</p>
@@ -122,7 +113,7 @@
     <div id="game-over">
         <h1 id="txt-over-title" style="color: var(--brazil-yellow); font-family: 'Luckiest Guy'; font-size: 4rem; margin-bottom: 0;"></h1>
         <h2 id="txt-over-sub" style="margin-top: 0; font-weight: 800;"></h2>
-        <p id="final-result" style="font-size: 2rem; margin: 20px 0; font-weight: 800;"></p>
+        <p id="final-result" style="font-size: 1.8rem; margin: 20px 0; font-weight: 800; white-space: pre-line;"></p>
         
         <button class="btn-action btn-retry" onclick="resetGame()" id="txt-btn-retry"></button>
         <button class="btn-action btn-whatsapp" id="share-wa"></button>
@@ -132,18 +123,24 @@
 
 <script>
     /**
-     * 🚩 [텍스트 및 링크 관리 구역]
+     * 🚩 [수정 가능 구역] 텍스트 및 설정
      */
     const LOCALE = {
         introTitle: "COMO JOGAR",
-        introDesc: "Toque na tela quando a bola\nchegar na boné do Dibo!\n\nPERFEITO: 10 pts / BOM: 5 pts\nA cada 10 combos: +20 pts!",
+        introDesc: "Toque na cabeça do Dibo!\nPERFEITO: 10 pts / BOM: 5 pts\nA cada 10 combos: +20 pts!\n\nNo modo DIFÍCIL e EXTREMO,\nmovimente o Dibo!",
         btnPlay: "JOGAR AGORA",
-        modeChangeTitle: "NOVO MODO",
+        
+        // 단계별 안내 문구
+        msgEasy: "TOQUE NA TELA!",
+        msgHard: "AGORA, MEXA DIBO!",
+        msgExtreme: "MEXA DIBO MAIS RÁPIDO!",
+        
         modeEasy: "MODO: EASY",
         modeHard: "MODO: DIFÍCIL",
         modeExtreme: "MODO: EXTREMO",
+        
         overTitle: "SÓ VAMOS!",
-        overSub: "Rumo ao Hexa!!!!",
+        overSub: "Rumo ao Hexa!!!",
         btnRetry: "JOGAR DE NOVO",
         btnShare: "COMPARTILHAR",
         btnLink: "Ainda não conhece o Dibo? 👀",
@@ -155,7 +152,6 @@
         document.getElementById('txt-intro-title').innerText = LOCALE.introTitle;
         document.getElementById('txt-intro-desc').innerText = LOCALE.introDesc;
         document.getElementById('txt-btn-play').innerText = LOCALE.btnPlay;
-        document.getElementById('txt-mode-change-title').innerText = LOCALE.modeChangeTitle;
         document.getElementById('txt-over-title').innerText = LOCALE.overTitle;
         document.getElementById('txt-over-sub').innerText = LOCALE.overSub;
         document.getElementById('txt-btn-retry').innerText = LOCALE.btnRetry;
@@ -167,10 +163,9 @@
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const introScreen = document.getElementById('intro-screen');
-    const modeChangeScreen = document.getElementById('mode-change-screen');
-    const newModeText = document.getElementById('txt-new-mode-name');
-    const countdownEl = document.getElementById('countdown-overlay');
+    const countdownOverlay = document.getElementById('countdown-overlay');
+    const countdownMsg = document.getElementById('countdown-msg');
+    const countdownNum = document.getElementById('countdown-num');
     const overScreen = document.getElementById('game-over');
     const judgmentEl = document.getElementById('judgment-text');
     const scoreEl = document.getElementById('score-board');
@@ -180,11 +175,11 @@
     images.idle.src = 'dibo_idle.png'; images.hit.src = 'dibo_hit.png'; images.fail.src = 'dibo_fail.png'; images.ball.src = 'ball.png';
 
     let score = 0; let combo = 0; let maxCombo = 0; let isGameOver = false; 
-    let gameState = 'INTRO'; // INTRO, COUNTDOWN, PLAYING, TRANSITION
+    let gameState = 'INTRO'; // INTRO, SEQUENCE, PLAYING
     let currentDiboImg = images.idle; let particles = []; let balls = [];
     let currentMode = 'EASY';
 
-    const GRAVITY = { EASY: 0.35, HARD: 0.45, EXTREME: 0.5 };
+    const GRAVITY = { EASY: 0.35, HARD: 0.4, EXTREME: 0.4 };
     let dibo = { w: 220, h: 360, x: 0, y: 0, targetX: 0 };
 
     function resize() {
@@ -195,40 +190,50 @@
     }
     window.addEventListener('resize', resize); resize();
 
-    function startSequence() {
-        introScreen.style.display = 'none';
-        countdownEl.style.display = 'flex';
-        let count = 3;
-        const timer = setInterval(() => {
-            count--;
-            if (count > 0) {
-                countdownEl.innerText = count;
-                countdownEl.style.transform = 'scale(1.4)';
-                setTimeout(() => countdownEl.style.transform = 'scale(1)', 100);
-            } else {
-                clearInterval(timer);
-                countdownEl.style.display = 'none';
-                gameState = 'PLAYING';
-                spawnBall();
-            }
-        }, 1000);
-    }
+    // [중요] 통합 시퀀스 로직 (안내문구 1초 -> 3,2,1 카운트다운)
+    function triggerSequence(type) {
+        gameState = 'SEQUENCE';
+        document.getElementById('intro-screen').style.display = 'none';
+        countdownOverlay.style.display = 'flex';
+        countdownNum.style.display = 'none';
+        
+        let msg = "";
+        if(type === 'START') msg = LOCALE.msgEasy;
+        else if(type === 'HARD') msg = LOCALE.msgHard;
+        else if(type === 'EXTREME') msg = LOCALE.msgExtreme;
+        
+        countdownMsg.innerText = msg;
 
-    function showModeChangeEffect(modeName) {
-        gameState = 'TRANSITION';
-        newModeText.innerText = modeName;
-        modeChangeScreen.style.display = 'flex';
+        // 1초 뒤에 3,2,1 시작
         setTimeout(() => {
-            modeChangeScreen.style.display = 'none';
-            gameState = 'PLAYING';
-        }, 3000);
+            countdownMsg.innerText = "READY?";
+            countdownNum.style.display = 'block';
+            let count = 3;
+            countdownNum.innerText = count;
+            
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdownNum.innerText = count;
+                } else {
+                    clearInterval(timer);
+                    countdownOverlay.style.display = 'none';
+                    gameState = 'PLAYING';
+                    // 기존 공들 제거 후 새로 생성
+                    balls = [];
+                    spawnBall();
+                    if(currentMode === 'EXTREME') spawnBall(800); // 익스트림은 공 2개
+                }
+            }, 1000);
+        }, 1000);
     }
 
     function spawnBall(delay = 0) {
         setTimeout(() => {
-            if(isGameOver) return;
+            if(isGameOver || gameState !== 'PLAYING') return;
+            const isRandom = (currentMode === 'HARD' || currentMode === 'EXTREME');
             balls.push({
-                x: currentMode === 'EXTREME' ? Math.random() * (canvas.width - 100) + 50 : canvas.width / 2,
+                x: isRandom ? Math.random() * (canvas.width - 100) + 50 : canvas.width / 2,
                 y: -100, r: 42, sx: 0, sy: 0, active: true
             });
         }, delay);
@@ -237,7 +242,11 @@
     function handleInput(e) {
         if (gameState !== 'PLAYING' || isGameOver) return;
         const inputX = (e.touches ? e.touches[0].clientX : e.clientX);
-        if (currentMode === 'EXTREME') dibo.targetX = inputX - dibo.w / 2;
+        
+        // EASY 제외한 모드에서 캐릭터 이동
+        if (currentMode !== 'EASY') {
+            dibo.targetX = inputX - dibo.w / 2;
+        }
 
         balls.forEach(ball => {
             if (!ball.active) return;
@@ -254,18 +263,14 @@
                     if (isPerfect) {
                         score += 10; combo++;
                         if(combo > maxCombo) maxCombo = combo;
-                        
-                        // 시각적 강조 효과
                         comboEl.style.transform = 'scale(1.3)';
                         setTimeout(() => comboEl.style.transform = 'scale(1)', 100);
-
                         if (combo > 0 && combo % 10 === 0) { 
                             score += 20; 
                             showJudgment('BÔNUS +20!', '#ff3300'); 
                         } else showJudgment('PERFEITO!', '#fed100');
                     } else {
-                        score += 5; 
-                        combo = 0; // BOM일 경우 콤보 리셋
+                        score += 5; combo = 0;
                         showJudgment('BOM!', '#ffffff');
                     }
                     updateDifficulty();
@@ -280,28 +285,41 @@
 
     canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); });
     canvas.addEventListener('mousedown', handleInput);
-    canvas.addEventListener('touchmove', (e) => { if(currentMode === 'EXTREME') handleInput(e); });
+    canvas.addEventListener('touchmove', (e) => { handleInput(e); });
 
     function updateDifficulty() {
         if (score >= 200 && currentMode !== 'EXTREME') {
-            currentMode = 'EXTREME'; 
-            showModeChangeEffect('EXTREMO');
-            spawnBall(1200); spawnBall(2400); 
+            currentMode = 'EXTREME';
+            triggerSequence('EXTREME');
         } else if (score >= 100 && score < 200 && currentMode !== 'HARD') {
-            currentMode = 'HARD'; 
-            showModeChangeEffect('DIFÍCIL');
+            currentMode = 'HARD';
+            triggerSequence('HARD');
         }
     }
 
     function update() {
         if (gameState !== 'PLAYING' || isGameOver) return;
-        if (currentMode === 'EXTREME') dibo.x += (dibo.targetX - dibo.x) * 0.18;
-        balls.forEach(ball => {
+        
+        // 캐릭터 이동 (EASY가 아닐 때만 부드럽게 추적)
+        if (currentMode !== 'EASY') {
+            dibo.x += (dibo.targetX - dibo.x) * 0.18;
+        }
+
+        balls.forEach((ball, idx) => {
             ball.sy += GRAVITY[currentMode];
             ball.x += ball.sx; ball.y += ball.sy;
             if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.sx *= -1;
+            
+            // 땅에 닿으면 종료
             if (ball.y > canvas.height - 50) endGame();
+
+            // 리프팅 성공 시 하늘 위로 사라진 공 리스폰 로직 (익스트림 대응)
+            if (ball.sy < 0 && ball.y < -150) {
+                balls.splice(idx, 1);
+                spawnBall(200);
+            }
         });
+
         particles.forEach((p, i) => {
             p.x += p.vx; p.y += p.vy; p.life -= 0.025;
             if (p.life <= 0) particles.splice(i, 1);
@@ -310,22 +328,31 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(isGameOver ? images.fail : currentDiboImg, dibo.x, dibo.y, dibo.w, dibo.h);
+        
+        const drawImg = isGameOver ? images.fail : currentDiboImg;
+        if(drawImg.complete) ctx.drawImage(drawImg, dibo.x, dibo.y, dibo.w, dibo.h);
+
         balls.forEach(ball => {
             ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.x * 0.03);
-            ctx.drawImage(images.ball, -ball.r, -ball.r, ball.r*2, ball.r*2);
+            if(images.ball.complete) ctx.drawImage(images.ball, -ball.r, -ball.r, ball.r*2, ball.r*2);
             ctx.restore();
         });
+        
         particles.forEach(p => {
             ctx.globalAlpha = p.life; ctx.fillStyle = p.c;
             ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
         });
         ctx.globalAlpha = 1;
 
-        // [중요] 실시간 UI 업데이트
         scoreEl.innerText = score;
         comboEl.innerText = `COMBO ${combo}`;
         
+        // 모드 태그 업데이트
+        let tagTxt = LOCALE.modeEasy;
+        if(currentMode === 'HARD') tagTxt = LOCALE.modeHard;
+        if(currentMode === 'EXTREME') tagTxt = LOCALE.modeExtreme;
+        document.getElementById('mode-tag').innerText = tagTxt;
+
         update();
         requestAnimationFrame(draw);
     }
@@ -348,7 +375,7 @@
         currentDiboImg = images.fail;
         setTimeout(() => {
             overScreen.style.display = 'flex';
-            document.getElementById('final-result').innerText = `PONTOS: ${score}\nMAX COMBO: ${maxCombo}`;
+            document.getElementById('final-result').innerText = `PONTOS: ${score}\nMAX COMBO: ${maxCombo}\nMODO: ${currentMode}`;
             const shareText = LOCALE.shareMsg(score, maxCombo);
             document.getElementById('share-wa').onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
         }, 1500);
