@@ -53,9 +53,11 @@
         #countdown-msg { font-size: 4rem; margin-bottom: 20px; color: white; -webkit-text-stroke: 2px var(--primary-blue); }
         #countdown-num { font-size: 10rem; }
 
+        /* HUD */
         #hud { position: absolute; top: 30px; width: 100%; text-align: center; pointer-events: none; z-index: 50; }
         #score-board { font-family: 'Luckiest Guy'; font-size: 5rem; margin: 0; color: var(--brazil-yellow); -webkit-text-stroke: 2.5px var(--primary-blue); }
-        #combo-board { font-size: 1.8rem; color: #ffffff; background: rgba(0,0,0,0.3); display: inline-block; padding: 5px 20px; border-radius: 30px; font-weight: 800; margin-top: 5px; transition: transform 0.1s ease-out; }
+        #combo-board { font-size: 1.8rem; color: #ffffff; background: rgba(0,0,0,0.3); display: inline-block; padding: 5px 20px; border-radius: 30px; font-weight: 800; margin-top: 5px; }
+        #mode-tag { font-size: 1.2rem; color: white; background: var(--primary-blue); display: inline-block; padding: 4px 15px; border-radius: 20px; font-weight: 800; margin-top: 5px; }
 
         #judgment-text {
             position: absolute; width: 100%; text-align: center; top: 35%;
@@ -69,12 +71,7 @@
             align-items: center; color: white; z-index: 250; text-align: center;
         }
 
-        .btn-action { 
-            width: 85%; max-width: 320px; padding: 16px; margin: 8px; 
-            border: none; border-radius: 50px; font-family: 'Kanit'; 
-            font-weight: 800; cursor: pointer; text-decoration: none; 
-            display: flex; justify-content: center; align-items: center; font-size: 1.3rem;
-        }
+        .btn-action { width: 85%; max-width: 320px; padding: 16px; margin: 8px; border: none; border-radius: 50px; font-family: 'Kanit'; font-weight: 800; cursor: pointer; text-decoration: none; display: flex; justify-content: center; align-items: center; font-size: 1.3rem; }
         .btn-retry { background: var(--brazil-yellow); color: var(--primary-blue); }
         .btn-whatsapp { background: var(--whatsapp-green); color: white; }
         .btn-link { background: var(--primary-blue); color: white; font-size: 1rem; border: 2px solid var(--brazil-yellow); }
@@ -85,9 +82,9 @@
 <div id="game-container">
     <div id="intro-screen" class="overlay">
         <div class="glass-box">
-            <h2 id="txt-intro-title"></h2>
-            <p id="txt-intro-desc"></p>
-            <button class="btn-play" onclick="triggerSequence('START')" id="txt-btn-play"></button>
+            <h2 id="txt-intro-title">COMO JOGAR</h2>
+            <p id="txt-intro-desc">Toque na cabeça do Dibo!</p>
+            <button class="btn-play" onclick="triggerSequence('START')" id="txt-btn-play">JOGAR AGORA</button>
         </div>
     </div>
 
@@ -99,18 +96,16 @@
     <div id="hud">
         <p id="score-board">0</p>
         <div id="combo-board">COMBO 0</div>
-        <div id="mode-tag">MODO: EASY</div> </div>
+        <div id="mode-tag">MODO: EASY</div>
     </div>
     
     <div id="judgment-text"></div>
-    
     <canvas id="gameCanvas"></canvas>
 
     <div id="game-over">
         <h1 id="txt-over-title" style="color: var(--brazil-yellow); font-family: 'Luckiest Guy'; font-size: 4rem; margin-bottom: 0;"></h1>
         <h2 id="txt-over-sub" style="margin-top: 0; font-weight: 800;"></h2>
         <p id="final-result" style="font-size: 1.8rem; margin: 20px 0; font-weight: 800; white-space: pre-line;"></p>
-        
         <button class="btn-action btn-retry" onclick="resetGame()" id="txt-btn-retry"></button>
         <button class="btn-action btn-whatsapp" id="share-wa"></button>
         <a href="" id="txt-btn-link" class="btn-action btn-link" target="_blank"></a>
@@ -120,7 +115,7 @@
 <script>
     const LOCALE = {
         introTitle: "COMO JOGAR",
-        introDesc: "Toque na cabeça do Dibo!\nPERFEITO: 10 pts / BOM: 5 pts\nA cada 10 combos: +20 pts!\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO \nde um lado ao outro!",
+        introDesc: "Toque na tela quando a bola\nchegar na boné do DIBO!\nPERFEITO: 10 pts / BOM: 5 pts\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO\nde um lado ao outro!",
         btnPlay: "JOGAR AGORA",
         msgEasy: "TOQUE NA TELA!",
         msgHard: "AGORA, MEXA DIBO!",
@@ -132,7 +127,7 @@
         overSub: "Rumo ao Hexa⚽",
         btnRetry: "JOGAR DE NOVO",
         btnShare: "COMPARTILHAR",
-        btnLink: "Ainda não conhece o Dibo?👀",
+        btnLink: "Ainda não conhece o Dibo? 👀",
         linkUrl: "https://www.instagram.com/deboacomdibo",
         shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no DIBO: Rumo ao Hexa⚽ Consegue me superar?`
     };
@@ -148,7 +143,6 @@
         document.getElementById('txt-btn-link').innerText = LOCALE.btnLink;
         document.getElementById('txt-btn-link').href = LOCALE.linkUrl;
     }
-    initTexts();
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -161,22 +155,16 @@
     const comboEl = document.getElementById('combo-board');
     const modeTag = document.getElementById('mode-tag');
 
-    // 이미지 객체 생성 (중복 선언 해결)
     const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
     images.idle.src = 'dibo_idle.png'; 
     images.hit.src = 'dibo_hit.png'; 
     images.fail.src = 'dibo_fail.png'; 
     images.ball.src = 'ball.png';
 
-    // 게임 상태 변수
-    let score = 0; 
-    let combo = 0; 
-    let maxCombo = 0; 
-    let isGameOver = false; 
+    let score = 0; let combo = 0; let maxCombo = 0; let isGameOver = false; 
     let gameState = 'INTRO'; 
-    let currentDiboImg = images.idle; 
-    let particles = []; 
-    let balls = [];
+    let currentDiboImg = images.idle; // 중복 선언 제거됨
+    let particles = []; let balls = [];
     let currentMode = 'EASY';
 
     const GRAVITY = { EASY: 0.35, HARD: 0.4, EXTREME: 0.4 };
@@ -189,18 +177,14 @@
         dibo.y = canvas.height - 430;
     }
     window.addEventListener('resize', resize); resize();
+    initTexts();
 
     function triggerSequence(type) {
         gameState = 'SEQUENCE';
         document.getElementById('intro-screen').style.display = 'none';
         countdownOverlay.style.display = 'flex';
         countdownNum.style.display = 'none';
-        
-        let msg = "";
-        if(type === 'START') msg = LOCALE.msgEasy;
-        else if(type === 'HARD') msg = LOCALE.msgHard;
-        else if(type === 'EXTREME') msg = LOCALE.msgExtreme;
-        
+        let msg = (type === 'START') ? LOCALE.msgEasy : (type === 'HARD') ? LOCALE.msgHard : LOCALE.msgExtreme;
         countdownMsg.innerText = msg;
 
         setTimeout(() => {
@@ -208,12 +192,10 @@
             countdownNum.style.display = 'block';
             let count = 3;
             countdownNum.innerText = count;
-            
             const timer = setInterval(() => {
                 count--;
-                if (count > 0) {
-                    countdownNum.innerText = count;
-                } else {
+                if (count > 0) { countdownNum.innerText = count; }
+                else {
                     clearInterval(timer);
                     countdownOverlay.style.display = 'none';
                     gameState = 'PLAYING';
@@ -228,7 +210,7 @@
     function spawnBall(delay = 0) {
         setTimeout(() => {
             if(isGameOver || gameState !== 'PLAYING') return;
-            const isRandom = (currentMode === 'HARD' || currentMode === 'EXTREME');
+            const isRandom = (currentMode !== 'EASY');
             balls.push({
                 x: isRandom ? Math.random() * (canvas.width - 100) + 50 : canvas.width / 2,
                 y: -100, r: 42, sx: 0, sy: 0, active: true
@@ -239,9 +221,7 @@
     function handleInput(e) {
         if (gameState !== 'PLAYING' || isGameOver) return;
         const inputX = (e.touches ? e.touches[0].clientX : e.clientX);
-        if (currentMode !== 'EASY') {
-            dibo.targetX = inputX - dibo.w / 2;
-        }
+        if (currentMode !== 'EASY') dibo.targetX = inputX - dibo.w / 2;
 
         balls.forEach(ball => {
             if (!ball.active) return;
@@ -252,21 +232,14 @@
             if (distX < 120 && distY > -75 && distY < 75) {
                 const absDistY = Math.abs(distY);
                 const isPerfect = absDistY < 22; 
-                const isGood = absDistY < 65;   
-
-                if (isPerfect || isGood) {
+                if (isPerfect || absDistY < 65) {
                     if (isPerfect) {
                         score += 10; combo++;
                         if(combo > maxCombo) maxCombo = combo;
-                        comboEl.style.transform = 'scale(1.3)';
-                        setTimeout(() => comboEl.style.transform = 'scale(1)', 100);
-                        if (combo > 0 && combo % 10 === 0) { 
-                            score += 20; 
-                            showJudgment('BÔNUS +20!', '#ff3300'); 
-                        } else showJudgment('PERFEITO!', '#fed100');
+                        if (combo % 10 === 0) { score += 20; showJudgment('BÔNUS +20!', '#ff3300'); }
+                        else showJudgment('PERFEITO!', '#fed100');
                     } else {
-                        score += 5; combo = 0;
-                        showJudgment('BOM!', '#ffffff');
+                        score += 5; combo = 0; showJudgment('BOM!', '#ffffff');
                     }
                     updateDifficulty();
                     ball.sy = -14; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.25;
@@ -284,31 +257,23 @@
 
     function updateDifficulty() {
         if (score >= 200 && currentMode !== 'EXTREME') {
-            currentMode = 'EXTREME';
-            triggerSequence('EXTREME');
+            currentMode = 'EXTREME'; triggerSequence('EXTREME');
         } else if (score >= 100 && score < 200 && currentMode !== 'HARD') {
-            currentMode = 'HARD';
-            triggerSequence('HARD');
+            currentMode = 'HARD'; triggerSequence('HARD');
         }
     }
 
     function update() {
         if (gameState !== 'PLAYING' || isGameOver) return;
-        if (currentMode !== 'EASY') {
-            dibo.x += (dibo.targetX - dibo.x) * 0.18;
-        }
+        if (currentMode !== 'EASY') dibo.x += (dibo.targetX - dibo.x) * 0.18;
 
         balls.forEach((ball, idx) => {
             ball.sy += GRAVITY[currentMode];
             ball.x += ball.sx; ball.y += ball.sy;
             if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.sx *= -1;
             if (ball.y > canvas.height - 50) endGame();
-            if (ball.sy < 0 && ball.y < -150) {
-                balls.splice(idx, 1);
-                spawnBall(200);
-            }
+            if (ball.sy < 0 && ball.y < -150) { balls.splice(idx, 1); spawnBall(200); }
         });
-
         particles.forEach((p, i) => {
             p.x += p.vx; p.y += p.vy; p.life -= 0.025;
             if (p.life <= 0) particles.splice(i, 1);
@@ -317,27 +282,22 @@
 
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        // 캐릭터 그리기 (안전장치 강화)
         let drawImg = isGameOver ? images.fail : currentDiboImg;
-        if (!drawImg) drawImg = images.idle;
-
-        if (drawImg.complete && drawImg.naturalWidth !== 0) {
+        
+        // 🚩 이미지 로딩 안전장치
+        if (drawImg && drawImg.complete && drawImg.naturalWidth !== 0) {
             ctx.drawImage(drawImg, dibo.x, dibo.y, dibo.w, dibo.h);
         } else {
-            // 이미지 로딩 실패 시 갈색 박스 표시 (디버깅용)
             ctx.fillStyle = 'rgba(139, 69, 19, 0.5)';
             ctx.fillRect(dibo.x, dibo.y, dibo.w, dibo.h);
         }
 
-        // 공 그리기
         balls.forEach(ball => {
             ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.x * 0.03);
             if (images.ball.complete && images.ball.naturalWidth !== 0) {
                 ctx.drawImage(images.ball, -ball.r, -ball.r, ball.r*2, ball.r*2);
             } else {
-                ctx.fillStyle = 'white';
-                ctx.beginPath(); ctx.arc(0, 0, ball.r, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(0, 0, ball.r, 0, Math.PI*2); ctx.fill();
             }
             ctx.restore();
         });
@@ -350,11 +310,7 @@
 
         scoreEl.innerText = score;
         comboEl.innerText = `COMBO ${combo}`;
-        
-        let tagTxt = LOCALE.modeEasy;
-        if(currentMode === 'HARD') tagTxt = LOCALE.modeHard;
-        if(currentMode === 'EXTREME') tagTxt = LOCALE.modeExtreme;
-        if (modeTag) modeTag.innerText = tagTxt;
+        modeTag.innerText = (currentMode === 'HARD') ? LOCALE.modeHard : (currentMode === 'EXTREME') ? LOCALE.modeExtreme : LOCALE.modeEasy;
 
         update();
         requestAnimationFrame(draw);
@@ -378,15 +334,12 @@
         currentDiboImg = images.fail;
         setTimeout(() => {
             overScreen.style.display = 'flex';
-            document.getElementById('final-result').innerText = `PONTOS: ${score}\nMAX COMBO: ${maxCombo}\nMODO: ${currentMode}`;
-            const shareText = LOCALE.shareMsg(score, maxCombo);
-            document.getElementById('share-wa').onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+            document.getElementById('final-result').innerText = `PONTOS: ${score}\nMAX COMBO: ${maxCombo}`;
+            document.getElementById('share-wa').onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(LOCALE.shareMsg(score, maxCombo))}`, '_blank');
         }, 1500);
     }
 
     function resetGame() { location.reload(); }
-
-    // 초기 실행
     draw();
 </script>
 </body>
