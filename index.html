@@ -47,7 +47,7 @@
         #judgment-text {
             position: absolute; width: 100%; text-align: center;
             top: 35%; font-family: 'Luckiest Guy', cursive;
-            font-size: 5rem; opacity: 0; 
+            font-size: 4rem; opacity: 0; 
             transition: transform 0.2s, opacity 0.2s;
             pointer-events: none; z-index: 15;
             -webkit-text-stroke: 2px #002776;
@@ -104,7 +104,7 @@
     </div>
 
     <div id="bottom-banner">
-        CLIQUE PARA COMEÇAR 🏆
+        CLIQUE A TELA PARA COMEÇAR 🏆
     </div>
 </div>
 
@@ -157,6 +157,7 @@
             gameActive = true; 
             ball.y = 50; 
             currentDiboImg = images.idle;
+            document.getElementById('bottom-banner').style.display = 'none';
             return; 
         }
 
