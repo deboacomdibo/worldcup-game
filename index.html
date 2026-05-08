@@ -573,7 +573,9 @@
     
             ranks.forEach((row, idx) => {
                 if(idx >= 50) return;
+                // row 생성 시 idx(인덱스)를 확인해서 스타일링
                 const tr = document.createElement('tr');
+                if(idx === 0) tr.style.backgroundColor = "rgba(254, 209, 0, 0.1)"; // 1등은 연한 노란색 배경
                 const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : idx + 1;
                 tr.innerHTML = `<td>${medal}</td><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>`;
                 body.innerHTML += tr.outerHTML;
