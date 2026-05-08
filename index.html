@@ -46,13 +46,26 @@
         }
 
         #countdown-overlay {
-            display: none; flex-direction: column; z-index: 150;
-            font-family: 'Luckiest Guy'; text-align: center; color: var(--brazil-yellow);
-            -webkit-text-stroke: 2px var(--primary-blue);
+            display: none; 
+            flex-direction: column; 
+            justify-content: center;  /* 가로 중앙 */
+            align-items: center;      /* 세로 중앙 */
+            z-index: 150;
+            font-family: 'Luckiest Guy'; 
+            color: var(--brazil-yellow);
+            -webkit-text-stroke: 3px var(--primary-blue); 
+            text-shadow: 8px 8px 0px rgba(0,0,0,0.2);
         }
         #countdown-mode { font-size: 2rem; color: white; margin-bottom: 10px; }
         #countdown-msg { font-size: 3rem; margin-bottom: 10px; color: white; }
-        #countdown-num { font-size: 8rem; }
+        #countdown-num { 
+            font-size: 10rem; 
+            line-height: 1;           /* 글자 주변의 불필요한 위아래 여백 제거 */
+            display: inline-block;    /* 애니메이션 효과가 글자 기준으로 정확히 먹히도록 함 */
+            margin: 0;
+            padding: 0.2em;           /* scale 효과 시 글자가 잘리지 않도록 주변 여유 공간 확보 */
+            vertical-align: middle;   /* 수직 정렬 보정 */
+        }
 
         #hud { position: absolute; top: 20px; width: 100%; text-align: center; pointer-events: none; z-index: 50; display: flex; flex-direction: column; align-items: center; }
         #score-board { font-family: 'Luckiest Guy'; font-size: 4rem; margin: 0; color: var(--brazil-yellow); -webkit-text-stroke: 2px var(--primary-blue); }
