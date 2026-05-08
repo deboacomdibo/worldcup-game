@@ -171,8 +171,15 @@
     const scoreEl = document.getElementById('score-board');
     const comboEl = document.getElementById('combo-board');
 
+    // [수정] 이미지 객체 생성 및 초기화 부분
     const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
-    images.idle.src = 'dibo_idle.png'; images.hit.src = 'dibo_hit.png'; images.fail.src = 'dibo_fail.png'; images.ball.src = 'ball.png';
+    images.idle.src = 'dibo_idle.png'; 
+    images.hit.src = 'dibo_hit.png'; 
+    images.fail.src = 'dibo_fail.png'; 
+    images.ball.src = 'ball.png';
+
+    // [수정] currentDiboImg가 처음부터 idle을 가리키도록 설정
+    let currentDiboImg = images.idle;
 
     let score = 0; let combo = 0; let maxCombo = 0; let isGameOver = false; 
     let gameState = 'INTRO'; // INTRO, SEQUENCE, PLAYING
@@ -329,12 +336,30 @@
     function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        const drawImg = isGameOver ? images.fail : currentDiboImg;
-        if(drawImg.complete) ctx.drawImage(drawImg, dibo.x, dibo.y, dibo.w, dibo.h);
+        // [보정] 현재 그려야 할 이미지 결정
+        let drawImg = isGameOver ? images.fail : currentDiboImg;
+        if (!drawImg) drawImg = images.idle; // 방어 코드
+    
+        // [보정] 이미지가 있으면 그리고, 없으면 갈색 사각형으로 표시
+        if (drawImg.complete && drawImg.naturalWidth !== 0) {
+            ctx.drawImage(drawImg, dibo.x, dibo.y, dibo.w, dibo.h);
+        } else {
+            // 이미지 로딩 실패 시 나타나는 임시 박스 (디보 크기)
+            ctx.fillStyle = 'rgba(139, 69, 19, 0.5)'; // 반투명 갈색
+            ctx.fillRect(dibo.x, dibo.y, dibo.w, dibo.h);
+            ctx.fillStyle = 'white';
+            ctx.fillText('Carregando Dibo...', dibo.x + 50, dibo.y + 100);
+        }
 
+        // 공 그리기 부분
         balls.forEach(ball => {
             ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.x * 0.03);
-            if(images.ball.complete) ctx.drawImage(images.ball, -ball.r, -ball.r, ball.r*2, ball.r*2);
+            if (images.ball.complete && images.ball.naturalWidth !== 0) {
+                ctx.drawImage(images.ball, -ball.r, -ball.r, ball.r*2, ball.r*2);
+            } else {
+                ctx.fillStyle = 'white';
+                ctx.beginPath(); ctx.arc(0, 0, ball.r, 0, Math.PI*2); ctx.fill();
+            }
             ctx.restore();
         });
         
