@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dibo: Rumo ao Hexa⚽</title>
+    <title>DIBO: Rumo ao Hexa⚽</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Kanit:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
 
@@ -95,6 +95,42 @@
         .btn-retry { background: var(--brazil-yellow); color: var(--primary-blue); }
         .btn-whatsapp { background: var(--whatsapp-green); color: white; }
         .btn-link { background: var(--primary-blue); color: white; font-size: 0.9rem; border: 1.5px solid var(--brazil-yellow); }
+        /* --- 랭킹 시스템 추가 스타일 --- */
+        .btn-ranking { 
+            background: #ffffff; 
+            color: var(--primary-blue); 
+            border: 2px solid var(--primary-blue); 
+            margin-top: 5px;
+        }
+        
+        .modal-overlay {
+            display: none; position: absolute; top: 0; left: 0; 
+            width: 100%; height: 100%; background: rgba(0,0,0,0.7); 
+            z-index: 300; justify-content: center; align-items: center;
+        }
+        
+        .rank-box {
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 35px; padding: 30px; width: 85%; max-width: 360px; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        
+        .rank-table-wrapper {
+            max-height: 250px; overflow-y: auto; margin: 15px 0;
+            border-radius: 15px; background: rgba(255,255,255,0.5);
+        }
+        
+        .rank-table { width: 100%; border-collapse: collapse; }
+        .rank-table th { position: sticky; top: 0; background: var(--primary-blue); color: white; padding: 8px; font-size: 0.8rem; }
+        .rank-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem; color: #333; }
+        
+        .input-nickname {
+            width: 100%; padding: 15px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1);
+            margin-bottom: 20px; font-family: 'Kanit'; font-size: 1.1rem; text-align: center;
+            box-sizing: border-box; outline: none;
+        }
     </style>
 </head>
 <body>
@@ -126,9 +162,29 @@
         <h1 id="txt-over-title" style="color: var(--brazil-yellow); font-family: 'Luckiest Guy'; font-size: 3rem; margin-bottom: 0;"></h1>
         <h2 id="txt-over-sub" style="margin-top: 0; font-weight: 800;"></h2>
         <p id="final-result" style="font-size: 1.5rem; margin: 20px 0; font-weight: 800; white-space: pre-line;"></p>
-        <button class="btn-action btn-retry" onclick="resetGame()" id="txt-btn-retry"></button>
-        <button class="btn-action btn-whatsapp" id="share-wa"></button>
+        <button class="btn-action btn-retry" onclick="resetGame()">JOGAR DE NOVO</button>
+        <button class="btn-action btn-ranking" onclick="openRankingInput()" id="btn-save-rank">SALVAR SCORE</button> 
+        <button class="btn-action btn-whatsapp" id="share-wa">COMPARTILHAR</button>
         <a href="" id="txt-btn-link" class="btn-action btn-link" target="_blank"></a>
+    </div>
+
+<div id="modal-rank-input" class="modal-overlay">
+    <div class="rank-box">
+        <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue)">NOVO RECORD!</h2>
+        <input type="text" id="nickname" class="input-nickname" placeholder="Seu Nickname" maxlength="10">
+        <button class="btn-action btn-retry" onclick="submitScore()" style="width:100%">ENVIAR</button>
+        <button onclick="closeModal('modal-rank-input')" style="background:none; border:none; margin-top:10px; cursor:pointer">Fechar</button>
+    </div>
+</div>
+
+<div id="modal-rank-board" class="modal-overlay">
+    <div class="rank-box">
+        <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue)">TOP RANKING</h2>
+        <table class="rank-table">
+            <thead><tr><th>Rank</th><th>Nome</th><th>Gols</th><th>Combo</th></tr></thead>
+            <tbody id="rank-list-body"></tbody>
+        </table>
+        <button class="btn-action btn-retry" onclick="closeModal('modal-rank-board')" style="width:100%; margin-top:15px">OK</button>
     </div>
 </div>
 
@@ -366,6 +422,66 @@
     }
 
     function resetGame() { location.reload(); }
+    /* --- 랭킹 시스템 로직 --- */
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbxP3hu-wLUADtu17-0afHhbxh_AYuB49lxpk7keyOtl0qvS2siXgX74C-nHO_cEW0AZ/exec";
+    
+    function openRankingInput() {
+        document.getElementById('modal-rank-input').style.display = 'flex';
+    }
+    
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+    }
+    
+    // 1. 점수 전송
+    async function submitScore() {
+        const nick = document.getElementById('nickname').value;
+        if(!nick) return alert("Por favor, digite seu nickname!");
+    
+        const data = { nickname: nick, score: score, combo: maxCombo };
+        const btn = document.getElementById('btn-save-rank');
+        
+        btn.disabled = true;
+        btn.innerText = "ENVIANDO...";
+    
+        try {
+            await fetch(scriptUrl, {
+                method: "POST",
+                mode: 'no-cors', // 구글 시트 CORS 대응
+                body: JSON.stringify(data)
+            });
+            closeModal('modal-rank-input');
+            showRankingBoard();
+        } catch (e) {
+            console.error(e);
+            alert("Erro ao conectar com o servidor.");
+            btn.disabled = false;
+            btn.innerText = "SALVAR SCORE";
+        }
+    }
+    
+    // 2. 랭킹 불러오기
+    async function showRankingBoard() {
+        document.getElementById('modal-rank-board').style.display = 'flex';
+        const body = document.getElementById('rank-list-body');
+        body.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
+    
+        try {
+            const resp = await fetch(scriptUrl);
+            const ranks = await resp.json();
+            
+            body.innerHTML = "";
+            ranks.forEach((row, idx) => {
+                if(idx >= 50) return; // 상위 50명만 표시
+                const tr = document.createElement('tr');
+                const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : idx + 1;
+                tr.innerHTML = `<td>${medal}</td><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>`;
+                body.innerHTML += tr.outerHTML;
+            });
+        } catch (e) {
+            body.innerHTML = "<tr><td colspan='4'>Erro ao carregar ranking.</td></tr>";
+        }
+    }
     draw();
 </script>
 </body>
