@@ -50,6 +50,8 @@
             flex-direction: column; 
             justify-content: center;  /* 가로 중앙 */
             align-items: center;      /* 세로 중앙 */
+            text-align: center; /* 내부 텍스트 가로 중앙 정렬 추가 */
+            width: 100%;       /* 전체 너비 확보 */
             z-index: 150;
             font-family: 'Luckiest Guy'; 
             color: var(--brazil-yellow);
@@ -259,10 +261,10 @@
             if(isGameOver || gameState !== 'PLAYING') return;
             const isRandom = (currentMode !== 'EASY');
             balls.push({
-                // 랜덤 생성 범위도 공 크기에 맞춰 조정 (여백 100 -> 120)
                 x: isRandom ? Math.random() * (canvas.width - 120) + 60 : canvas.width / 2,
                 y: -50, 
-                r: canvas.width * 0.12, // 화면 너비의 12%로 확대
+                // 모바일에서는 너비의 12%, 하지만 PC에서도 최대 45px를 넘지 않도록 제한
+                r: Math.min(canvas.width * 0.12, 45), 
                 sx: 0, sy: 0, active: true
             });
         }, delay);
@@ -311,7 +313,7 @@
 
     function update() {
         if (gameState !== 'PLAYING' || isGameOver) return;
-        if (currentMode !== 'EASY') dibo.x += (dibo.targetX - dibo.x) * 0.15;
+        if (currentMode !== 'EASY') dibo.x += (dibo.targetX - dibo.x) * 0.17;
         balls.forEach((ball, idx) => {
             ball.sy += GRAVITY[currentMode];
             ball.x += ball.sx; ball.y += ball.sy;
