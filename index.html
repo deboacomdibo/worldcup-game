@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dibo: Rumo ao Hexa! v4.1</title>
+    <title>DIBO: Rumo ao Hexa⚽</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Kanit:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
 
@@ -99,6 +99,7 @@
     <div id="hud">
         <p id="score-board">0</p>
         <div id="combo-board">COMBO 0</div>
+        <div id="mode-tag">MODO: EASY</div> </div>
     </div>
     
     <div id="judgment-text"></div>
@@ -158,6 +159,7 @@
     const judgmentEl = document.getElementById('judgment-text');
     const scoreEl = document.getElementById('score-board');
     const comboEl = document.getElementById('combo-board');
+    const modeTag = document.getElementById('mode-tag');
 
     // 이미지 객체 생성 (중복 선언 해결)
     const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
