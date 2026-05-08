@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dibo: Rumo ao Hexa! v3.7</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Kanit:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { 
+            --glass-bg: rgba(255, 255, 255, 0.5); 
+            --primary-blue: #002776; 
+            --brazil-yellow: #fed100; 
+            --whatsapp-green: #25D366;
+        }
+        
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Kanit', sans-serif; background-color: #009739; }
+
+        #game-container {
+            position: relative; width: 100%; height: 100%;
+            background: url('background.png') no-repeat center center;
+            background-size: cover; background-color: #009739;
+        }
+
+        canvas { display: block; touch-action: none; }
+
+        /* [UI] 공통 레이아웃 */
+        .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 100; background: rgba(0,0,0,0.4); }
+
+        /* 인트로 박스 */
+        .glass-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 40px; padding: 40px 20px; width: 85%; max-width: 400px;
+            text-align: center; border: 1.5px solid rgba(255,255,255,0.4);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .glass-box h2 { font-family: 'Luckiest Guy'; color: var(--primary-blue); font-size: 2.2rem; margin-top: 0; }
+        .glass-box p { color: #000; font-weight: 700; line-height: 1.6; font-size: 1.1rem; margin-bottom: 30px; white-space: pre-line; }
+
+        .btn-play {
+            background: var(--primary-blue); color: white; border: none;
+            padding: 18px 50px; border-radius: 50px; font-size: 1.6rem;
+            font-family: 'Kanit'; font-weight: 800; cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,39,118,0.5); transition: 0.3s;
+        }
+
+        /* [UI] 모드 전환 알림 (3초) */
+        #mode-change-screen {
+            display: none; z-index: 200; background: rgba(0, 39, 118, 0.7);
+            flex-direction: column; text-align: center; color: white;
+        }
+        #mode-change-screen h1 { font-family: 'Luckiest Guy'; font-size: 3rem; color: var(--brazil-yellow); margin-bottom: 10px; -webkit-text-stroke: 2px white; }
+        #mode-change-screen h2 { font-size: 4rem; font-weight: 800; margin: 0; }
+
+        /* [UI] 카운트다운 */
+        #countdown-overlay {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            justify-content: center; align-items: center; z-index: 150;
+            font-family: 'Luckiest Guy'; font-size: 9rem; color: var(--brazil-yellow);
+            -webkit-text-stroke: 3px var(--primary-blue);
+        }
+
+        /* [UI] HUD */
+        #hud { position: absolute; top: 30px; width: 100%; text-align: center; pointer-events: none; z-index: 50; }
+        #score-board { font-family: 'Luckiest Guy'; font-size: 5rem; margin: 0; color: var(--brazil-yellow); -webkit-text-stroke: 2.5px var(--primary-blue); }
+        #mode-tag { font-size: 1.3rem; color: white; background: var(--primary-blue); display: inline-block; padding: 5px 20px; border-radius: 30px; font-weight: 800; margin-top: 5px; }
+
+        /* [UI] 판정 */
+        #judgment-text {
+            position: absolute; width: 100%; text-align: center; top: 35%;
+            font-family: 'Luckiest Guy'; font-size: 3.5rem; opacity: 0; 
+            pointer-events: none; z-index: 60; -webkit-text-stroke: 1.5px var(--primary-blue);
+        }
+
+        /* [UI] 게임 오버 */
+        #game-over {
+            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); flex-direction: column; justify-content: center;
+            align-items: center; color: white; z-index: 250; text-align: center;
+        }
+
+        .btn-action { 
+            width: 85%; max-width: 320px; padding: 16px; margin: 8px; 
+            border: none; border-radius: 50px; font-family: 'Kanit'; 
+            font-weight: 800; cursor: pointer; text-decoration: none; 
+            display: flex; justify-content: center; align-items: center; font-size: 1.3rem;
+        }
+        .btn-retry { background: var(--brazil-yellow); color: var(--primary-blue); }
+        .btn-whatsapp { background: var(--whatsapp-green); color: white; }
+        .btn-link { background: var(--primary-blue); color: white; font-size: 1rem; border: 2px solid var(--brazil-yellow); }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="intro-screen" class="overlay">
+        <div class="glass-box">
+            <h2 id="txt-intro-title"></h2>
+            <p id="txt-intro-desc"></p>
+            <button class="btn-play" onclick="startSequence()" id="txt-btn-play"></button>
+        </div>
+    </div>
+
+    <div id="mode-change-screen" class="overlay">
+        <h1 id="txt-mode-change-title">NOVO MODO</h1>
+        <h2 id="txt-new-mode-name">DIFÍCIL</h2>
+    </div>
+
+    <div id="countdown-overlay">3</div>
+
+    <div id="hud">
+        <p id="score-board">0</p>
+        <div id="mode-tag">EASY</div>
+    </div>
+    
+    <div id="judgment-text"></div>
+    
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="game-over">
+        <h1 id="txt-over-title" style="color: var(--brazil-yellow); font-family: 'Luckiest Guy'; font-size: 4rem; margin-bottom: 0;"></h1>
+        <h2 id="txt-over-sub" style="margin-top: 0; font-weight: 800;"></h2>
+        <p id="final-result" style="font-size: 2rem; margin: 20px 0; font-weight: 800;"></p>
+        
+        <button class="btn-action btn-retry" onclick="resetGame()" id="txt-btn-retry"></button>
+        <button class="btn-action btn-whatsapp" id="share-wa"></button>
+        <a href="" id="txt-btn-link" class="btn-action btn-link" target="_blank"></a>
+    </div>
+</div>
+
+<script>
+    /**
+     * 🚩 [텍스트 및 링크 관리 구역]
+     */
+    const LOCALE = {
+        introTitle: "COMO JOGAR",
+        introDesc: "Toque na tela quando a bola\nchegar na cabeça do Dibo!\n\nPERFEITO: 10 pts / BOM: 5 pts\nA cada 10 combos: +20 pts!",
+        btnPlay: "JOGAR AGORA",
+        modeChangeTitle: "NOVO MODO", // 모드 바뀔 때 뜨는 제목
+        modeEasy: "MODO: EASY",
+        modeHard: "MODO: DIFÍCIL",
+        modeExtreme: "MODO: EXTREMO",
+        overTitle: "SÓ VAMOS!",
+        overSub: "Rumo ao Hexa!!!",
+        btnRetry: "JOGAR DE NOVO",
+        btnShare: "COMPARTILHAR",
+        btnLink: "Ainda não conhece o Dibo? 👀",
+        linkUrl: "https://yourlink.com",
+        shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no Dibo: Rumo ao Hexa⚽ Consegue me superar?`
+    };
+
+    function initTexts() {
+        document.getElementById('txt-intro-title').innerText = LOCALE.introTitle;
+        document.getElementById('txt-intro-desc').innerText = LOCALE.introDesc;
+        document.getElementById('txt-btn-play').innerText = LOCALE.btnPlay;
+        document.getElementById('txt-mode-change-title').innerText = LOCALE.modeChangeTitle;
+        document.getElementById('txt-over-title').innerText = LOCALE.overTitle;
+        document.getElementById('txt-over-sub').innerText = LOCALE.overSub;
+        document.getElementById('txt-btn-retry').innerText = LOCALE.btnRetry;
+        document.getElementById('share-wa').innerText = LOCALE.btnShare;
+        document.getElementById('txt-btn-link').innerText = LOCALE.btnLink;
+        document.getElementById('txt-btn-link').href = LOCALE.linkUrl;
+    }
+    initTexts();
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const introScreen = document.getElementById('intro-screen');
+    const modeChangeScreen = document.getElementById('mode-change-screen');
+    const newModeText = document.getElementById('txt-new-mode-name');
+    const countdownEl = document.getElementById('countdown-overlay');
+    const overScreen = document.getElementById('game-over');
+    const judgmentEl = document.getElementById('judgment-text');
+    const scoreEl = document.getElementById('score-board');
+    const modeTag = document.getElementById('mode-tag');
+
+    const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
+    images.idle.src = 'dibo_idle.png'; images.hit.src = 'dibo_hit.png'; images.fail.src = 'dibo_fail.png'; images.ball.src = 'ball.png';
+
+    let score = 0; let combo = 0; let isGameOver = false; 
+    let gameState = 'INTRO'; // INTRO, COUNTDOWN, PLAYING, TRANSITION
+    let currentDiboImg = images.idle; let particles = []; let balls = [];
+    let currentMode = 'EASY';
+
+    const GRAVITY = { EASY: 0.35, HARD: 0.58, EXTREME: 0.48 };
+    let dibo = { w: 220, h: 360, x: 0, y: 0, targetX: 0 };
+
+    function resize() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        dibo.x = canvas.width / 2 - dibo.w / 2;
+        dibo.targetX = dibo.x;
+        dibo.y = canvas.height - 430;
+    }
+    window.addEventListener('resize', resize); resize();
+
+    function startSequence() {
+        introScreen.style.display = 'none';
+        countdownEl.style.display = 'flex';
+        let count = 3;
+        const timer = setInterval(() => {
+            count--;
+            if (count > 0) {
+                countdownEl.innerText = count;
+                countdownEl.style.transform = 'scale(1.4)';
+                setTimeout(() => countdownEl.style.transform = 'scale(1)', 100);
+            } else {
+                clearInterval(timer);
+                countdownEl.style.display = 'none';
+                gameState = 'PLAYING';
+                spawnBall();
+            }
+        }, 1000);
+    }
+
+    // [중요] 모드 전환 화면을 보여주는 함수
+    function showModeChangeEffect(modeName) {
+        gameState = 'TRANSITION'; // 게임 물리 업데이트 일시 정지
+        newModeText.innerText = modeName;
+        modeChangeScreen.style.display = 'flex';
+        
+        setTimeout(() => {
+            modeChangeScreen.style.display = 'none';
+            gameState = 'PLAYING'; // 3초 뒤 다시 시작
+        }, 3000);
+    }
+
+    function spawnBall(delay = 0) {
+        setTimeout(() => {
+            if(isGameOver) return;
+            balls.push({
+                x: currentMode === 'EXTREME' ? Math.random() * (canvas.width - 100) + 50 : canvas.width / 2,
+                y: -100, r: 42, sx: 0, sy: 0, active: true
+            });
+        }, delay);
+    }
+
+    function handleInput(e) {
+        if (gameState !== 'PLAYING' || isGameOver) return;
+        const inputX = (e.touches ? e.touches[0].clientX : e.clientX);
+        if (currentMode === 'EXTREME') dibo.targetX = inputX - dibo.w / 2;
+
+        balls.forEach(ball => {
+            if (!ball.active) return;
+            const distX = Math.abs(ball.x - (dibo.x + dibo.w / 2));
+            const headY = dibo.y + 20; 
+            const distY = ball.y + ball.r - headY;
+
+            if (distX < 120 && distY > -75 && distY < 75) {
+                const absDistY = Math.abs(distY);
+                const isPerfect = absDistY < 22; 
+                const isGood = absDistY < 65;   
+
+                if (isPerfect || isGood) {
+                    if (isPerfect) {
+                        score += 10; combo++;
+                        if (combo > 0 && combo % 10 === 0) { 
+                            score += 20; 
+                            showJudgment('BÔNUS +20!', '#ff3300'); 
+                        } else showJudgment('PERFEITO!', '#fed100');
+                    } else {
+                        score += 5; combo = 0;
+                        showJudgment('BOM!', '#ffffff');
+                    }
+                    updateDifficulty();
+                    ball.sy = -14; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.25;
+                    currentDiboImg = images.hit;
+                    setTimeout(() => { if(!isGameOver) currentDiboImg = images.idle; }, 250);
+                    createParticles(ball.x, ball.y, isPerfect ? 20 : 10);
+                }
+            }
+        });
+    }
+
+    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); });
+    canvas.addEventListener('mousedown', handleInput);
+    canvas.addEventListener('touchmove', (e) => { if(currentMode === 'EXTREME') handleInput(e); });
+
+    function updateDifficulty() {
+        if (score >= 200 && currentMode !== 'EXTREME') {
+            currentMode = 'EXTREME'; 
+            modeTag.innerText = LOCALE.modeExtreme; 
+            modeTag.style.background = '#ff0000';
+            showModeChangeEffect('EXTREMO'); // 모드 전환 알림 호출
+            spawnBall(1200); spawnBall(2400); 
+        } else if (score >= 100 && score < 200 && currentMode !== 'HARD') {
+            currentMode = 'HARD'; 
+            modeTag.innerText = LOCALE.modeHard; 
+            modeTag.style.background = '#002776';
+            showModeChangeEffect('DIFÍCIL'); // 모드 전환 알림 호출
+        }
+    }
+
+    function update() {
+        if (gameState !== 'PLAYING' || isGameOver) return;
+        if (currentMode === 'EXTREME') dibo.x += (dibo.targetX - dibo.x) * 0.18;
+        balls.forEach(ball => {
+            ball.sy += GRAVITY[currentMode];
+            ball.x += ball.sx; ball.y += ball.sy;
+            if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.sx *= -1;
+            if (ball.y > canvas.height - 50) endGame();
+        });
+        particles.forEach((p, i) => {
+            p.x += p.vx; p.y += p.vy; p.life -= 0.025;
+            if (p.life <= 0) particles.splice(i, 1);
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(isGameOver ? images.fail : currentDiboImg, dibo.x, dibo.y, dibo.w, dibo.h);
+        balls.forEach(ball => {
+            ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.x * 0.03);
+            ctx.drawImage(images.ball, -ball.r, -ball.r, ball.r*2, ball.r*2);
+            ctx.restore();
+        });
+        particles.forEach(p => {
+            ctx.globalAlpha = p.life; ctx.fillStyle = p.c;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI*2); ctx.fill();
+        });
+        ctx.globalAlpha = 1;
+        scoreEl.innerText = score;
+        update();
+        requestAnimationFrame(draw);
+    }
+
+    function showJudgment(txt, color) {
+        judgmentEl.innerText = txt; judgmentEl.style.color = color; judgmentEl.style.opacity = '1';
+        judgmentEl.style.transform = 'scale(1.2)';
+        setTimeout(() => { judgmentEl.style.opacity = '0'; judgmentEl.style.transform = 'scale(1)'; }, 450);
+    }
+
+    function createParticles(x, y, count) {
+        for (let i = 0; i < count; i++) {
+            particles.push({ x, y, vx: (Math.random()-0.5)*15, vy: (Math.random()-0.5)*15, life: 1, c: Math.random()>0.5 ? '#fed100' : '#ffffff' });
+        }
+    }
+
+    function endGame() {
+        if (isGameOver) return;
+        isGameOver = true;
+        setTimeout(() => {
+            overScreen.style.display = 'flex';
+            document.getElementById('final-result').innerText = `PONTOS: ${score}\nMODO: ${currentMode}`;
+            const shareText = LOCALE.shareMsg(score, combo);
+            document.getElementById('share-wa').onclick = () => window.open(`https://wa.me/?text=${encodeURIComponent(shareText)}`, '_blank');
+        }, 1500);
+    }
+
+    function resetGame() { location.reload(); }
+
+    draw();
+</script>
+</body>
+</html>
