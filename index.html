@@ -105,11 +105,22 @@
         }
         
         /* 4번째 버튼 전용 스타일: 모양은 똑같되 색상만 포인트 */
-        .btn-link { 
-            background: var(--primary-blue) !important; 
-            color: white !important; 
-            border: 2px solid var(--brazil-yellow) !important; 
-            box-sizing: border-box;
+        .btn-link {
+            background: var(--primary-blue) !important;
+            color: #ffffff !important; /* 글자색 흰색 강제 */
+            border: 2px solid var(--brazil-yellow) !important;
+            display: flex !important;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.85rem !important; /* 글자가 길면 잘 보이라고 살짝 줄임 */
+            overflow: visible !important; /* 글자가 잘리지 않게 */
+        }
+        
+        /* 혹시 버튼 안에 다른 글자가 겹치지 않게 */
+        #txt-btn-link {
+            min-height: 40px;
+            line-height: 1.2;
+            white-space: normal; /* 글자가 길면 줄바꿈 허용 */
         }
         /* FECHAR 버튼 전용 (회색 배경) */
         .btn-close { 
@@ -192,7 +203,8 @@
         <button class="btn-action btn-retry" onclick="resetGame()">JOGAR DE NOVO</button>
         <button class="btn-action btn-ranking" onclick="openRankingInput()" id="btn-save-rank">SALVAR SCORE</button> 
         <button class="btn-action btn-whatsapp" id="share-wa">COMPARTILHAR</button>
-        <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')"></button>
+        <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')">
+            </button>
     </div>
 
 <div id="modal-rank-input" class="modal-overlay">
@@ -280,13 +292,22 @@
     let dibo = { w: 0, h: 0, x: 0, y: 0, targetX: 0 };
 
     function initTexts() {
-        document.getElementById('txt-intro-title').innerText = LOCALE.introTitle;
-        document.getElementById('txt-intro-desc').innerText = LOCALE.introDesc;
-        document.getElementById('txt-btn-play').innerText = LOCALE.btnPlay;
-        document.getElementById('txt-over-title').innerText = LOCALE.overTitle;
-        document.getElementById('txt-over-sub').innerText = LOCALE.overSub;
-        document.getElementById('txt-btn-retry').innerText = LOCALE.btnRetry;
-        document.getElementById('share-wa').innerText = LOCALE.btnShare;
+        // 텍스트를 넣을 때 요소가 있는지 하나씩 체크해서 에러를 방지합니다.
+        const setText = (id, text) => {
+            const el = document.getElementById(id);
+            if (el) el.innerText = text;
+        };
+    
+        setText('txt-intro-title', LOCALE.introTitle);
+        setText('txt-intro-desc', LOCALE.introDesc);
+        setText('txt-btn-play', LOCALE.btnPlay);
+        setText('txt-over-title', LOCALE.overTitle);
+        setText('txt-over-sub', LOCALE.overSub);
+        setText('txt-btn-retry', LOCALE.btnRetry);
+        setText('share-wa', LOCALE.btnShare);
+        
+        // 🚩 핵심: 4번째 버튼 텍스트 강제 주입
+        setText('txt-btn-link', LOCALE.btnLink);
         
         // 🚩 4번째 버튼 텍스트가 여기서 정확히 들어가는지 확인!
         const linkBtn = document.getElementById('txt-btn-link');
@@ -317,7 +338,7 @@
         countdownNum.style.display = 'none';
         
         let msg = ""; let mName = "";
-        if(type === 'START') { msg = LOCALE.msgEasy; mName = "MODO: EASY"; }
+        if(type === 'START') { msg = LOCALE.msgEasy; mName = "MODO: FÁCIL"; }
         else if(type === 'HARD') { msg = LOCALE.msgHard; mName = "MODO: DIFÍCIL"; }
         else { msg = LOCALE.msgExtreme; mName = "MODO: EXTREMO"; }
         
