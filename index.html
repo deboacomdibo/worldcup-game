@@ -119,16 +119,50 @@
     window.addEventListener('resize', resize); resize();
 
     function triggerSequence(type) {
-        gameState = 'SEQUENCE'; document.getElementById('intro-screen').style.display = 'none';
+        gameState = 'SEQUENCE'; 
+        document.getElementById('intro-screen').style.display = 'none';
         countdownOverlay.style.display = 'flex';
-        const msg = type === 'COMEÇAR' ? LOCALE.msgEasy : (type === 'HARD' ? LOCALE.msgHard : LOCALE.msgExtreme);
+        
+        let msg = ""; 
+        let mName = "";
+    
+        // 🚩 모드별 텍스트와 제목 설정
+        if (type === 'START' || type === 'COMEÇAR') { 
+            msg = LOCALE.msgEasy; 
+            mName = "MODO: FÁCIL"; 
+        } else if (type === 'HARD') { 
+            msg = LOCALE.msgHard; 
+            mName = "MODO: DIFÍCIL"; // DIFÌCIL을 DIFÍCIL로 교정
+        } else if (type === 'EXTREME') { 
+            msg = LOCALE.msgExtreme; 
+            mName = "MODO: EXTREMO"; 
+        }
+    
+        // 화면에 반영
         document.getElementById('countdown-msg').innerText = msg;
-        document.getElementById('countdown-mode').innerText = type;
+        document.getElementById('countdown-mode').innerText = mName;
+        
+        // 카운트다운 숫자 숨기기 (PRONTO? 문구 노출용)
         document.getElementById('countdown-num').style.display = 'none';
+    
         setTimeout(() => {
             document.getElementById('countdown-num').style.display = 'block';
-            let count = 3; document.getElementById('countdown-num').innerText = count;
-            const timer = setInterval(() => { count--; if (count > 0) document.getElementById('countdown-num').innerText = count; else { clearInterval(timer); countdownOverlay.style.display = 'none'; gameState = 'PLAYING'; balls = []; spawnBall(); if(currentMode === 'EXTREME') spawnBall(800); } }, 1000);
+            let count = 3; 
+            document.getElementById('countdown-num').innerText = count;
+            
+            const timer = setInterval(() => { 
+                count--; 
+                if (count > 0) {
+                    document.getElementById('countdown-num').innerText = count; 
+                } else { 
+                    clearInterval(timer); 
+                    countdownOverlay.style.display = 'none'; 
+                    gameState = 'PLAYING'; 
+                    balls = []; 
+                    spawnBall(); 
+                    if(currentMode === 'EXTREME') spawnBall(800); 
+                } 
+            }, 1000);
         }, 1200);
     }
 
