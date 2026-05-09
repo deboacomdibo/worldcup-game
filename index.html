@@ -143,31 +143,69 @@
         }, interval);
     }
 
-    function triggerSequence(type) {
-        gameState = 'SEQUENCE'; document.getElementById('intro-screen').style.display = 'none';
-        countdownOverlay.style.display = 'flex';
+        function triggerSequence(type) {
+            gameState = 'SEQUENCE'; 
+            document.getElementById('intro-screen').style.display = 'none';
+            countdownOverlay.style.display = 'flex';
+            
+            let msg = ""; 
+            let mName = "";
         
-        let msg = ""; let mName = "";
-        if (type === 'START' || type === 'COMEÇAR') { 
-            msg = LOCALE.msgEasy; mName = "MODO: FÁCIL"; 
-            // 🚩 재시작 시 볼륨 복구 후 재생
-            bgmBase.volume = 0.5;
-            bgmGolden.volume = 0;
-            bgmBase.play(); bgmGolden.play(); 
-        } 
-        else if (type === 'HARD') { msg = LOCALE.msgHard; mName = "MODO: DIFÍCIL"; } 
-        else if (type === 'EXTREME') { msg = LOCALE.msgExtreme; mName = "MODO: EXTREMO"; }
-
-        document.getElementById('countdown-msg').innerText = msg;
-        document.getElementById('countdown-mode').innerText = mName;
-        document.getElementById('countdown-num').style.display = 'none';
-
-        setTimeout(() => {
-            document.getElementById('countdown-num').style.display = 'block';
-            let count = 3; document.getElementById('countdown-num').innerText = count;
-            const timer = setInterval(() => { count--; if (count > 0) document.getElementById('countdown-num').innerText = count; else { clearInterval(timer); countdownOverlay.style.display = 'none'; gameState = 'PLAYING'; balls = []; spawnBall(); if(currentMode === 'EXTREME') spawnBall(800); } }, 1000);
-        }, 1200);
-    }
+            // 1. 모드별 텍스트 및 오디오 초기 설정
+            if (type === 'START' || type === 'COMEÇAR') { 
+                msg = LOCALE.msgEasy; 
+                mName = "MODO: FÁCIL"; 
+                
+                // 🚩 [모바일 대응] 재생 전 볼륨을 확실히 세팅
+                bgmBase.volume = 0.5;
+                bgmGolden.volume = 0; 
+        
+                // 오디오 재생 시작 (에러 방지를 위해 catch 추가)
+                bgmBase.play().catch(e => console.log("BGM Base error:", e));
+                bgmGolden.play().catch(e => console.log("BGM Golden error:", e));
+        
+                // 🚩 [핵심 안전장치] 모바일에서 0 볼륨이 무시되는 경우를 대비해 
+                // 재생 0.15초 후에 다시 한번 강제로 볼륨을 0으로 만듭니다.
+                setTimeout(() => {
+                    if (combo < 5) {
+                        bgmGolden.volume = 0;
+                    }
+                }, 150);
+        
+            } else if (type === 'HARD') { 
+                msg = LOCALE.msgHard; 
+                mName = "MODO: DIFÍCIL"; 
+            } else if (type === 'EXTREME') { 
+                msg = LOCALE.msgExtreme; 
+                mName = "MODO: EXTREMO"; 
+            }
+        
+            // 2. 화면 UI 업데이트
+            document.getElementById('countdown-msg').innerText = msg;
+            document.getElementById('countdown-mode').innerText = mName;
+            document.getElementById('countdown-num').style.display = 'none';
+        
+            // 3. 3초 카운트다운 로직
+            setTimeout(() => {
+                document.getElementById('countdown-num').style.display = 'block';
+                let count = 3; 
+                document.getElementById('countdown-num').innerText = count;
+                
+                const timer = setInterval(() => { 
+                    count--; 
+                    if (count > 0) {
+                        document.getElementById('countdown-num').innerText = count; 
+                    } else { 
+                        clearInterval(timer); 
+                        countdownOverlay.style.display = 'none'; 
+                        gameState = 'PLAYING'; 
+                        balls = []; 
+                        spawnBall(); 
+                        if(currentMode === 'EXTREME') spawnBall(800); 
+                    } 
+                }, 1000);
+            }, 1200);
+        }
 
     function spawnBall(delay = 0) {
         setTimeout(() => { if(isGameOver || gameState !== 'PLAYING') return; balls.push({ x: (currentMode === 'EASY') ? canvas.width/2 : Math.random()*(canvas.width-120)+60, y: -50, r: Math.min(canvas.width * 0.12, 45), sx: 0, sy: 0, active: true }); }, delay);
