@@ -48,26 +48,25 @@
         #countdown-overlay {
             display: none; 
             flex-direction: column; 
-            justify-content: center;  /* 가로 중앙 */
-            align-items: center;      /* 세로 중앙 */
-            text-align: center; /* 내부 텍스트 가로 중앙 정렬 추가 */
-            width: 100%;       /* 전체 너비 확보 */
+            justify-content: center; 
+            align-items: center;
+            text-align: center;
+            width: 100%;
             z-index: 150;
             font-family: 'Luckiest Guy'; 
             color: var(--brazil-yellow);
             -webkit-text-stroke: 3px var(--primary-blue); 
-            /* 수정: 번짐 값을 0으로 고정하여 아우라 제거, 오프셋을 줄여 깔끔하게 */
-            text-shadow: 4px 4px 0px rgba(0,0,0,0.3); /* 더 선명하고 짙은 하드 섀도우 */
+            text-shadow: 4px 4px 0px rgba(0,0,0,0.3);
         }
         #countdown-mode { font-size: 2rem; color: white; margin-bottom: 10px; }
         #countdown-msg { font-size: 3rem; margin-bottom: 10px; color: white; }
         #countdown-num { 
             font-size: 10rem; 
-            line-height: 1;           /* 글자 주변의 불필요한 위아래 여백 제거 */
-            display: inline-block;    /* 애니메이션 효과가 글자 기준으로 정확히 먹히도록 함 */
+            line-height: 1; 
+            display: inline-block; 
             margin: 0;
-            padding: 0.2em;           /* scale 효과 시 글자가 잘리지 않도록 주변 여유 공간 확보 */
-            vertical-align: middle;   /* 수직 정렬 보정 */
+            padding: 0.2em;
+            vertical-align: middle;
         }
 
         #hud { position: absolute; top: 20px; width: 100%; text-align: center; pointer-events: none; z-index: 50; display: flex; flex-direction: column; align-items: center; }
@@ -80,7 +79,6 @@
             pointer-events: none; z-index: 60; -webkit-text-stroke: 1px var(--primary-blue);
         }
 
-        /* 1. 게임오버 전체 배경 박스 */
         #game-over {
             display: none; position: absolute; top: 0; left: 0; 
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -93,10 +91,9 @@
         #game-over h2 { font-size: 1rem !important; margin: 0 0 8px 0 !important; }
         #final-result { font-size: 1rem !important; margin: 8px 0 !important; line-height: 1.2; }
         
-        /* 모든 버튼 모양 통일 */
         .btn-action { 
             width: 85%; max-width: 280px; 
-            height: 42px; /* 높이를 고정해서 잘림 방지 */
+            height: 42px; 
             padding: 0 !important; 
             margin: 4px !important; 
             border: none; border-radius: 50px; 
@@ -104,25 +101,22 @@
             cursor: pointer; display: flex; justify-content: center; align-items: center;
         }
         
-        /* 4번째 버튼 전용 스타일: 모양은 똑같되 색상만 포인트 */
         .btn-link {
             background: var(--primary-blue) !important;
-            color: #ffffff !important; /* 글자색 흰색 강제 */
+            color: #ffffff !important; 
             border: 2px solid var(--brazil-yellow) !important;
             display: flex !important;
             justify-content: center;
             align-items: center;
-            font-size: 0.85rem !important; /* 글자가 길면 잘 보이라고 살짝 줄임 */
-            overflow: visible !important; /* 글자가 잘리지 않게 */
+            font-size: 0.85rem !important;
+            overflow: visible !important;
         }
         
-        /* 혹시 버튼 안에 다른 글자가 겹치지 않게 */
         #txt-btn-link {
             min-height: 40px;
             line-height: 1.2;
-            white-space: normal; /* 글자가 길면 줄바꿈 허용 */
+            white-space: normal;
         }
-        /* FECHAR 버튼 전용 (회색 배경) */
         .btn-close { 
             background: #888888; 
             color: white; 
@@ -132,7 +126,6 @@
         .btn-whatsapp { background: var(--whatsapp-green); color: white; }
         .btn-link { background: var(--primary-blue); color: white; font-size: 0.9rem; border: 1.5px solid var(--brazil-yellow); }
 
-        /* --- 랭킹 시스템 추가 스타일 --- */
         .btn-ranking { 
             background: #ffffff; 
             color: var(--primary-blue); 
@@ -146,7 +139,6 @@
             z-index: 300; justify-content: center; align-items: center;
         }
         
-        /* 랭킹 등록 모달 박스 */
         .rank-box {
             background: rgba(255, 255, 255, 0.85); 
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -154,19 +146,15 @@
             padding: 25px; 
             width: 85%; 
             max-width: 340px; 
-            
-            /* [핵심] 내부 요소들을 세로로 쌓고 가로 중앙 정렬 */
             display: flex;
             flex-direction: column;
             align-items: center; 
-            
             border: 1px solid rgba(255,255,255,0.4);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
         
-        /* 모달 내부의 입력창 */
         .input-nickname {
-            width: 90%; /* 박스 너비에 맞춤 */
+            width: 90%; 
             padding: 12px; 
             border-radius: 15px; 
             border: 1px solid rgba(0,0,0,0.1);
@@ -177,28 +165,27 @@
             outline: none;
         }
         
-        /* 모달 내부의 버튼들 전용 */
         .rank-box .btn-action {
-            width: 90% !important;  /* 너비를 입력창과 맞춤 */
-            margin: 5px 0 !important; /* 위아래 간격만 유지, 가로는 자동 중앙 */
+            width: 90% !important; 
+            margin: 5px 0 !important; 
             height: 45px;
         }
         
         .rank-table-wrapper {
-            max-height: 200px; /* 버튼 공간 확보를 위해 살짝 축소 */
+            max-height: 200px; 
             overflow-y: auto;
             margin: 10px 0;
         }
         
         .rank-table { width: 100%; border-collapse: collapse; }
         .rank-table th { 
-        position: sticky; 
-        top: 0; 
-        background: var(--primary-blue); 
-        color: white; 
-        padding: 8px; 
-        font-size: 0.8rem; 
-        text-align: center !important; /* 헤더 가운데 정렬 */
+            position: sticky; 
+            top: 0; 
+            background: var(--primary-blue); 
+            color: white; 
+            padding: 8px; 
+            font-size: 0.8rem; 
+            text-align: center !important; 
         }
     
         .rank-table td { 
@@ -206,7 +193,7 @@
             border-bottom: 1px solid rgba(0,0,0,0.05); 
             font-size: 0.9rem; 
             color: #333; 
-            text-align: center !important; /* 셀 내용 가운데 정렬 */
+            text-align: center !important; 
             vertical-align: middle;
         }
     </style>
@@ -243,8 +230,7 @@
         <button class="btn-action btn-retry" onclick="resetGame()">JOGAR DE NOVO</button>
         <button class="btn-action btn-ranking" onclick="openRankingInput()" id="btn-save-rank">SALVAR RECORDE</button> 
         <button class="btn-action btn-whatsapp" id="share-wa">COMPARTILHAR</button>
-        <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')">
-            </button>
+        <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')"></button>
     </div>
 
 <div id="modal-rank-input" class="modal-overlay">
@@ -295,7 +281,6 @@
     const scoreEl = document.getElementById('score-board');
     const comboEl = document.getElementById('combo-board');
 
-    // [중요] 이미지 로딩 시스템 개선
     const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
     let loadedImages = 0;
     const totalImages = 4;
@@ -303,7 +288,6 @@
     function onImageLoad() {
         loadedImages++;
         if (loadedImages === totalImages) {
-            // 모든 이미지가 로드되면 플레이 버튼 활성화
             document.getElementById('txt-intro-title').innerText = LOCALE.introTitle;
             document.getElementById('txt-intro-desc').innerText = LOCALE.introDesc;
             document.getElementById('txt-btn-play').style.display = 'inline-block';
@@ -316,7 +300,6 @@
     images.fail.onload = onImageLoad;
     images.ball.onload = onImageLoad;
 
-    // 경로 에러 방지 (모바일 환경 대응)
     images.idle.src = 'dibo_idle.png';
     images.hit.src = 'dibo_hit.png';
     images.fail.src = 'dibo_fail.png';
@@ -328,11 +311,14 @@
     let particles = []; let balls = [];
     let currentMode = 'EASY';
 
+    // 시간 기반 보정을 위한 변수 추가
+    let lastTime = 0;
+    const targetFPS = 60;
+
     const GRAVITY = { EASY: 0.35, HARD: 0.4, EXTREME: 0.4 };
     let dibo = { w: 0, h: 0, x: 0, y: 0, targetX: 0 };
 
     function initTexts() {
-        // 텍스트를 넣을 때 요소가 있는지 하나씩 체크해서 에러를 방지합니다.
         const setText = (id, text) => {
             const el = document.getElementById(id);
             if (el) el.innerText = text;
@@ -345,11 +331,8 @@
         setText('txt-over-sub', LOCALE.overSub);
         setText('txt-btn-retry', LOCALE.btnRetry);
         setText('share-wa', LOCALE.btnShare);
-        
-        // 🚩 핵심: 4번째 버튼 텍스트 강제 주입
         setText('txt-btn-link', LOCALE.btnLink);
         
-        // 🚩 4번째 버튼 텍스트가 여기서 정확히 들어가는지 확인!
         const linkBtn = document.getElementById('txt-btn-link');
         if(linkBtn) {
             linkBtn.innerText = LOCALE.btnLink;
@@ -359,14 +342,10 @@
    function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-        
-        // 높이를 화면의 50%로 대폭 확대
         dibo.h = canvas.height * 0.5; 
         dibo.w = dibo.h * (220 / 360); 
-        
         dibo.x = canvas.width / 2 - dibo.w / 2;
         dibo.targetX = dibo.x;
-        // 하단 여백을 40px로 조정하여 캐릭터를 더 낮게 배치
         dibo.y = canvas.height - dibo.h - 40; 
     }
     window.addEventListener('resize', resize); resize();
@@ -413,7 +392,6 @@
             balls.push({
                 x: isRandom ? Math.random() * (canvas.width - 120) + 60 : canvas.width / 2,
                 y: -50, 
-                // 모바일에서는 너비의 12%, 하지만 PC에서도 최대 45px를 넘지 않도록 제한
                 r: Math.min(canvas.width * 0.12, 45), 
                 sx: 0, sy: 0, active: true
             });
@@ -461,20 +439,43 @@
         else if (score >= 100 && score < 200 && currentMode !== 'HARD') { currentMode = 'HARD'; triggerSequence('HARD'); }
     }
 
-    function update() {
+    // 시간 보정 계수(timeScale)를 적용한 물리 업데이트
+    function update(dt) {
         if (gameState !== 'PLAYING' || isGameOver) return;
-        if (currentMode !== 'EASY') dibo.x += (dibo.targetX - dibo.x) * 0.17;
+        
+        // 기준 프레임 대비 현재 프레임의 시간 배율 계산
+        const timeScale = dt / (1000 / targetFPS);
+
+        if (currentMode !== 'EASY') {
+            // 캐릭터 이동 보정
+            dibo.x += (dibo.targetX - dibo.x) * Math.min(0.17 * timeScale, 1);
+        }
+
         balls.forEach((ball, idx) => {
-            ball.sy += GRAVITY[currentMode];
-            ball.x += ball.sx; ball.y += ball.sy;
+            // 중력 및 이동 속도 보정
+            ball.sy += GRAVITY[currentMode] * timeScale;
+            ball.x += ball.sx * timeScale; 
+            ball.y += ball.sy * timeScale;
+
             if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.sx *= -1;
             if (ball.y > canvas.height - 30) endGame();
             if (ball.sy < 0 && ball.y < -100) { balls.splice(idx, 1); spawnBall(200); }
         });
-        particles.forEach((p, i) => { p.x += p.vx; p.y += p.vy; p.life -= 0.03; if (p.life <= 0) particles.splice(i, 1); });
+
+        particles.forEach((p, i) => { 
+            p.x += p.vx * timeScale; 
+            p.y += p.vy * timeScale; 
+            p.life -= 0.03 * timeScale; 
+            if (p.life <= 0) particles.splice(i, 1); 
+        });
     }
 
-    function draw() {
+    // 타임스탬프를 사용하는 draw 함수
+    function draw(timestamp) {
+        if (!lastTime) lastTime = timestamp;
+        const dt = timestamp - lastTime;
+        lastTime = timestamp;
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         let drawImg = isGameOver ? images.fail : currentDiboImg;
         if (drawImg && drawImg.complete) {
@@ -489,7 +490,9 @@
         ctx.globalAlpha = 1;
         scoreEl.innerText = score;
         comboEl.innerText = `COMBO ${combo}`;
-        update();
+        
+        // 업데이트 시 시간 간격 전달
+        update(dt);
         requestAnimationFrame(draw);
     }
 
@@ -516,7 +519,7 @@
     }
 
     function resetGame() { location.reload(); }
-    /* --- 랭킹 시스템 로직 --- */
+    
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwpErHF4s5usetoSpUzL-ccEY0U9YmKn1whxiG_2o_6sQ0tH5rilKqVN92NXfELbjkn/exec";
     
     function openRankingInput() {
@@ -527,7 +530,6 @@
         document.getElementById(id).style.display = 'none';
     }
     
-    // 1. 점수 전송
     async function submitScore() {
         const nick = document.getElementById('nickname').value;
         if(!nick) return alert("Por favor, digite seu nickname!");
@@ -541,7 +543,7 @@
         try {
             await fetch(scriptUrl, {
                 method: "POST",
-                mode: 'no-cors', // 구글 시트 CORS 대응
+                mode: 'no-cors', 
                 body: JSON.stringify(data)
             });
             closeModal('modal-rank-input');
@@ -554,14 +556,12 @@
         }
     }
     
-    // 2. 랭킹 불러오기
     async function showRankingBoard() {
         document.getElementById('modal-rank-board').style.display = 'flex';
         const body = document.getElementById('rank-list-body');
         body.innerHTML = "<tr><td colspan='4' style='text-align:center; padding: 20px;'>Carregando...</td></tr>";
     
         try {
-            // 캐시 방지를 위해 랜덤 쿼리 추가
             const resp = await fetch(scriptUrl + "?t=" + new Date().getTime());
             const ranks = await resp.json();
             
@@ -573,9 +573,8 @@
     
             ranks.forEach((row, idx) => {
                 if(idx >= 50) return;
-                // row 생성 시 idx(인덱스)를 확인해서 스타일링
                 const tr = document.createElement('tr');
-                if(idx === 0) tr.style.backgroundColor = "rgba(254, 209, 0, 0.1)"; // 1등은 연한 노란색 배경
+                if(idx === 0) tr.style.backgroundColor = "rgba(254, 209, 0, 0.1)"; 
                 const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : idx + 1;
                 tr.innerHTML = `<td>${medal}</td><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>`;
                 body.innerHTML += tr.outerHTML;
