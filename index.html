@@ -56,7 +56,7 @@
         <button class="btn-action btn-whatsapp" id="share-wa">COMPARTILHAR</button>
         <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')"></button>
     </div>
-    <div id="modal-rank-input" class="modal-overlay"><div class="rank-box"><h2>NOVO RECORDE!</h2><input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10"><button class="btn-action btn-retry" onclick="submitScore()" style="width:90%">ENVIAR</button><button class="btn-action btn-close" onclick="closeModal('modal-rank-input')" style="width:90%">FECHAR</button></div></div>
+    <div id="modal-rank-input" class="modal-overlay"><div class="rank-box"><h2>NOVO RECORDE!</h2><input type="text" id="nickname" class="input-nickname" placeholder="Nick" maxlength="10"><button class="btn-action btn-retry" onclick="submitScore()" style="width:90%">ENVIAR</button><button class="btn-action btn-close" onclick="closeModal('modal-rank-input')" style="width:90%">FECHAR</button></div></div>
     <div id="modal-rank-board" class="modal-overlay"><div class="rank-box"><h2>TOP CRAQUES</h2><div class="rank-table-wrapper"><table class="rank-table"><thead><tr><th>Rank</th><th>Nome</th><th>Gols</th><th>Combo</th></tr></thead><tbody id="rank-list-body"></tbody></table></div><button class="btn-action btn-retry" onclick="closeModal('modal-rank-board')" style="width:100%; margin-top:15px">OK</button></div></div>
 </div>
 
@@ -67,7 +67,7 @@
         btnPlay: "JOGAR AGORA", msgEasy: "TOQUE NA TELA!", msgHard: "AGORA, MEXA DIBO!", msgExtreme: "MEXA MAIS RÁPIDO!",
         overTitle: "SÓ VAMOS!", overSub: "Rumo ao Hexa⚽", btnRetry: "JOGAR DE NOVO", btnShare: "COMPARTILHAR",
         btnLink: "Ainda não conhece o DIBO?👀", linkUrl: "https://www.instagram.com/deboacomdibo",
-        shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no DIBO: Rumo ao Hexa⚽ Consegue superar?`
+        shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no DIBO: Rumo ao Hexa⚽ Consegue superar? https://dibo-worldcup.vercel.app/`
     };
 
     // 사운드 설정
