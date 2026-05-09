@@ -57,13 +57,13 @@
         <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')"></button>
     </div>
     <div id="modal-rank-input" class="modal-overlay"><div class="rank-box"><h2>NOVO RECORDE!</h2><input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10"><button class="btn-action btn-retry" onclick="submitScore()" style="width:90%">ENVIAR</button><button class="btn-action btn-close" onclick="closeModal('modal-rank-input')" style="width:90%">FECHAR</button></div></div>
-    <div id="modal-rank-board" class="modal-overlay"><div class="rank-box"><h2>TOP CRAQUES</h2><div class="rank-table-wrapper"><table class="rank-table"><thead><tr><th>Rank</th><th>Nome</th><th>Gols</th><th>Combo</th></tr></thead><tbody id="rank-list-body"></tbody></table></div><button class="btn-action btn-retry" onclick="closeModal('modal-rank-board')" style="width:90%">OK</button></div></div>
+    <div id="modal-rank-board" class="modal-overlay"><div class="rank-box"><h2>TOP CRAQUES</h2><div class="rank-table-wrapper"><table class="rank-table"><thead><tr><th>Rank</th><th>Nome</th><th>Gols</th><th>Combo</th></tr></thead><tbody id="rank-list-body"></tbody></table></div><button class="btn-action btn-retry" onclick="closeModal('modal-rank-board')" style="width:100%; margin-top:15px">OK</button></div></div>
 </div>
 
 <script>
     const LOCALE = {
         introTitle: "COMO JOGAR",
-        introDesc: "Toque na tela quando a bola\nchegar na boné do DIBO!\nPERFEITO: 10 pts / BOM: 5 pts\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO\num lado ao outro!",
+        introDesc: "Toque na tela quando a bola\nchegar na boné do DIBO!\nPERFEITO: 10 pts / BOM: 5 pts\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO um lado ao outro!",
         btnPlay: "JOGAR AGORA", msgEasy: "TOQUE NA TELA!", msgHard: "AGORA,\nMEXA DIBO!", msgExtreme: "MEXA MAIS RÁPIDO!",
         overTitle: "SÓ VAMOS!", overSub: "Rumo ao Hexa⚽", btnRetry: "JOGAR DE NOVO", btnShare: "COMPARTILHAR",
         btnLink: "Ainda não conhece o DIBO?👀", linkUrl: "https://www.instagram.com/deboacomdibo",
@@ -80,14 +80,27 @@
 
     let lastTime = 0, targetFPS = 60, score = 0, combo = 0, maxCombo = 0, isGameOver = false, gameState = 'INTRO', isSubmitting = false;
     let currentDiboImg, particles = [], balls = [], currentMode = 'EASY';
-    const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
+    
+    // 🚩 1. 이미지 객체 확장 (hit 대신 perfect, bom 추가)
+    const images = { idle: new Image(), perfect: new Image(), bom: new Image(), fail: new Image(), ball: new Image() };
     const GRAVITY = { EASY: 0.35, HARD: 0.4, EXTREME: 0.4 };
     let dibo = { w: 0, h: 0, x: 0, y: 0, targetX: 0 };
 
     let loadedImages = 0;
-    function onImageLoad() { loadedImages++; if (loadedImages === 4) { document.getElementById('txt-btn-play').style.display = 'inline-block'; initTexts(); } }
-    images.idle.onload = onImageLoad; images.hit.onload = onImageLoad; images.fail.onload = onImageLoad; images.ball.onload = onImageLoad;
-    images.idle.src = 'dibo_idle.png'; images.hit.src = 'dibo_hit.png'; images.fail.src = 'dibo_fail.png'; images.ball.src = 'ball.png';
+    // 🚩 2. 로딩 이미지 개수 수정 (4 -> 5)
+    function onImageLoad() { loadedImages++; if (loadedImages === 5) { document.getElementById('txt-btn-play').style.display = 'inline-block'; initTexts(); } }
+    
+    images.idle.onload = onImageLoad; 
+    images.perfect.onload = onImageLoad; // 추가
+    images.bom.onload = onImageLoad;     // 추가
+    images.fail.onload = onImageLoad; 
+    images.ball.onload = onImageLoad;
+    
+    images.idle.src = 'dibo_idle.png'; 
+    images.perfect.src = 'dibo_perfect.png'; // 🚩 경로 확인 필요
+    images.bom.src = 'dibo_bom.png';         // 🚩 경로 확인 필요
+    images.fail.src = 'dibo_fail.png'; 
+    images.ball.src = 'ball.png';
     currentDiboImg = images.idle;
 
     function initTexts() {
@@ -135,21 +148,33 @@
                 const headY = dibo.y + (dibo.h * 0.05); 
                 const distY = ball.y + ball.r - headY;
 
-                // 🚩 판정 박스 60px 복구
                 if (distX < dibo.w * 0.65 && Math.abs(distY) < 60) {
                     const absDistY = Math.abs(distY);
-                    // 🚩 Perfect 범위 30px 적용
                     const isPerfect = absDistY < 30;
                     if (isPerfect || absDistY < 60) {
+                        
+                        ball.sy = -13; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.25;
+                        
                         if (isPerfect) {
                             score += 10; combo++; if(combo > maxCombo) maxCombo = combo;
                             if (combo >= 5) document.getElementById('game-container').classList.add('golden-combo');
+                            
+                            // 🚩 3. Perfect일 때 표정 설정
+                            currentDiboImg = images.perfect; 
+                            
                             if (combo > 0 && combo % 10 === 0) { score += 20; showJudgment('COMBO BÔNUS +20!', '#ff3300'); } else showJudgment('PERFEITO!', '#fed100');
                         } else {
-                            score += 5; combo = 0; document.getElementById('game-container').classList.remove('golden-combo'); showJudgment('BOM!', '#ffffff');
+                            score += 5; combo = 0; document.getElementById('game-container').classList.remove('golden-combo'); 
+                            
+                            // 🚩 4. Bom일 때 표정 설정
+                            currentDiboImg = images.bom; 
+                            
+                            showJudgment('BOM!', '#ffffff');
                         }
-                        ball.sy = -13; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.25;
-                        currentDiboImg = images.hit; setTimeout(() => { if(!isGameOver) currentDiboImg = images.idle; }, 200);
+                        
+                        // 표정 유지 시간 조정 (필요시)
+                        setTimeout(() => { if(!isGameOver) currentDiboImg = images.idle; }, 250);
+                        
                         createParticles(ball.x, ball.y, isPerfect ? 15 : 8); updateDifficulty();
                     }
                 }
@@ -169,7 +194,7 @@
     function update(dt) {
         if (gameState !== 'PLAYING' || isGameOver) return;
         const timeScale = Math.min(dt / (1000 / targetFPS), 2.0);
-        if (currentMode !== 'EASY') dibo.x += (dibo.targetX - dibo.x) * Math.min(0.22 * timeScale, 1); // 이동속도 최적화
+        if (currentMode !== 'EASY') dibo.x += (dibo.targetX - dibo.x) * Math.min(0.22 * timeScale, 1);
         balls.forEach((ball, idx) => {
             ball.sy += GRAVITY[currentMode] * timeScale; ball.x += ball.sx * timeScale; ball.y += ball.sy * timeScale;
             if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.sx *= -1;
