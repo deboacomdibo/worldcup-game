@@ -23,7 +23,11 @@
             background-size: cover; background-color: #009739;
         }
 
-        canvas { display: block; touch-action: none; width: 100%; height: 100%; }
+        canvas { display: block; touch-action: none; width: 100%; height: 100%;
+            touch-action: none; /* 브라우저의 줌, 스크롤 기능을 끄고 터치 입력을 즉시 전달 */
+            user-select: none;  /* 텍스트 선택 방지 */
+            -webkit-tap-highlight-color: transparent; /* 탭할 때 생기는 파란 박스 제거 */
+        }
 
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 100; background: rgba(0,0,0,0.5); }
 
@@ -477,10 +481,18 @@
         });
     }
 
-    canvas.addEventListener('touchstart', (e) => { 
-        if (e.cancelable) e.preventDefault(); 
-        handleInput(e); 
-    }, {passive: false});
+    // 기존 리스너를 이 코드로 교체
+    canvas.addEventListener('touchstart', (e) => {
+        // 여러 손가락 터치 시에도 첫 번째 터치만 즉시 처리
+        if (e.touches.length > 1) {
+            // 멀티 터치 방지 (필요 시)
+        }
+        
+        // 브라우저 기본 동작(줌, 스크롤)을 완전히 무력화
+        if (e.cancelable) e.preventDefault();
+        
+        handleInput(e);
+    }, { passive: false }); // passive: false가 있어야 preventDefault가 완벽하게 작동합니다.
     
     canvas.addEventListener('mousedown', (e) => {
         handleInput(e);
