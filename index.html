@@ -4,86 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DIBO: Rumo ao Hexa⚽</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Kanit:ital,wght@0,800;1,800&display=swap" rel="stylesheet">
-
     <style>
-        :root { 
-            --glass-bg: rgba(255, 255, 255, 0.5); 
-            --primary-blue: #002776; 
-            --brazil-yellow: #fed100; 
-            --whatsapp-green: #25D366;
-        }
-        
+        :root { --glass-bg: rgba(255, 255, 255, 0.5); --primary-blue: #002776; --brazil-yellow: #fed100; --whatsapp-green: #25D366; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Kanit', sans-serif; background-color: #009739; touch-action: none; }
-
-        #game-container {
-            position: relative; width: 100%; height: 100%;
-            background: url('background.png') no-repeat center center;
-            background-size: cover; background-color: #009739;
-            transition: background-color 0.5s ease;
-        }
-
-        #game-container.golden-combo {
-            background-image: linear-gradient(rgba(254, 209, 0, 0.35), rgba(254, 209, 0, 0.35)), url('background.png') !important;
-            background-blend-mode: color; background-color: var(--brazil-yellow);
-        }
-
+        #game-container { position: relative; width: 100%; height: 100%; background: url('background.png') no-repeat center center; background-size: cover; transition: background-color 0.5s ease; }
+        #game-container.golden-combo { background-image: linear-gradient(rgba(254, 209, 0, 0.35), rgba(254, 209, 0, 0.35)), url('background.png') !important; background-blend-mode: color; background-color: var(--brazil-yellow); }
         canvas { display: block; width: 100%; height: 100%; touch-action: none; -webkit-tap-highlight-color: transparent; }
-
         .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; z-index: 100; background: rgba(0,0,0,0.5); }
-
-        .glass-box {
-            background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border-radius: 40px; padding: 30px 20px; width: 85%; max-width: 400px;
-            text-align: center; border: 1.5px solid rgba(255,255,255,0.4);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-
-        .glass-box h2 { font-family: 'Luckiest Guy'; color: var(--primary-blue); font-size: 2rem; margin-top: 0; }
+        .glass-box { background: var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-radius: 40px; padding: 30px 20px; width: 85%; max-width: 400px; text-align: center; border: 1.5px solid rgba(255,255,255,0.4); box-shadow: 0 10px 40px rgba(0,0,0,0.3); }
+        .glass-box h2 { font-family: 'Luckiest Guy'; color: var(--primary-blue); font-size: 2rem; margin: 0; }
         .glass-box p { color: #000; font-weight: 700; line-height: 1.5; font-size: 1rem; margin-bottom: 25px; white-space: pre-line; }
-
-        .btn-play {
-            background: var(--primary-blue); color: white; border: none;
-            padding: 15px 40px; border-radius: 50px; font-size: 1.4rem;
-            font-family: 'Kanit'; font-weight: 800; cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0,39,118,0.5);
-        }
-
-        #countdown-overlay {
-            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; width: 100%; z-index: 150;
-            font-family: 'Luckiest Guy'; color: var(--brazil-yellow); -webkit-text-stroke: 3px var(--primary-blue); text-shadow: 4px 4px 0px rgba(0,0,0,0.3);
-        }
+        .btn-play { background: var(--primary-blue); color: white; border: none; padding: 15px 40px; border-radius: 50px; font-size: 1.4rem; font-family: 'Kanit'; font-weight: 800; cursor: pointer; box-shadow: 0 5px 20px rgba(0,39,118,0.5); }
+        #countdown-overlay { display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; width: 100%; z-index: 150; font-family: 'Luckiest Guy'; color: var(--brazil-yellow); -webkit-text-stroke: 3px var(--primary-blue); text-shadow: 4px 4px 0px rgba(0,0,0,0.3); }
         #countdown-mode { font-size: 2rem; color: white; margin-bottom: 10px; -webkit-text-stroke: 0; }
         #countdown-msg { font-size: 3rem; margin-bottom: 10px; color: white; -webkit-text-stroke: 0; }
         #countdown-num { font-size: 10rem; line-height: 1; display: inline-block; padding: 0.2em; }
-
         #hud { position: absolute; top: 20px; width: 100%; text-align: center; pointer-events: none; z-index: 50; display: flex; flex-direction: column; align-items: center; }
         #score-board { font-family: 'Luckiest Guy'; font-size: 4rem; margin: 0; color: var(--brazil-yellow); -webkit-text-stroke: 2px var(--primary-blue); }
         #combo-board { font-size: 1.5rem; color: #ffffff; background: rgba(0,0,0,0.3); display: inline-block; padding: 5px 25px; border-radius: 30px; font-weight: 800; }
-
-        #judgment-text {
-            position: absolute; width: 100%; text-align: center; top: 35%;
-            font-family: 'Luckiest Guy'; font-size: 3rem; opacity: 0; 
-            pointer-events: none; z-index: 60; -webkit-text-stroke: 1px var(--primary-blue);
-        }
-
-        #game-over {
-            display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9);
-            flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 250; text-align: center;
-            padding: 10px; box-sizing: border-box;
-        }
+        #judgment-text { position: absolute; width: 100%; text-align: center; top: 35%; font-family: 'Luckiest Guy'; font-size: 3rem; opacity: 0; pointer-events: none; z-index: 60; -webkit-text-stroke: 1px var(--primary-blue); }
+        #game-over { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); flex-direction: column; justify-content: center; align-items: center; color: white; z-index: 250; text-align: center; padding: 10px; box-sizing: border-box; }
         #game-over h1 { font-size: 1.8rem !important; margin: 0 0 5px 0 !important; color: var(--brazil-yellow); font-family: 'Luckiest Guy'; }
         #game-over h2 { font-size: 1rem !important; margin: 0 0 8px 0 !important; }
         #final-result { font-size: 1rem !important; margin: 8px 0 !important; line-height: 1.2; font-weight: 800; }
-
         .btn-action { width: 85%; max-width: 280px; height: 42px; margin: 4px !important; border: none; border-radius: 50px; font-family: 'Kanit'; font-weight: 800; font-size: 0.9rem !important; cursor: pointer; display: flex; justify-content: center; align-items: center; }
         .btn-retry { background: var(--brazil-yellow); color: var(--primary-blue); }
         .btn-ranking { background: #ffffff; color: var(--primary-blue); border: 2px solid var(--primary-blue); }
         .btn-whatsapp { background: var(--whatsapp-green); color: white; }
         .btn-link { background: var(--primary-blue) !important; color: white !important; border: 2px solid var(--brazil-yellow) !important; font-size: 0.85rem !important; }
         .btn-close { background: #888888; color: white; }
-
         .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 300; justify-content: center; align-items: center; }
         .rank-box { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 35px; padding: 25px; width: 85%; max-width: 340px; display: flex; flex-direction: column; align-items: center; border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         .input-nickname { width: 90%; padding: 12px; border-radius: 15px; border: 1px solid rgba(0,0,0,0.1); margin-bottom: 15px; font-family: 'Kanit'; font-size: 1.1rem; text-align: center; outline: none; }
@@ -94,92 +44,41 @@
     </style>
 </head>
 <body>
-
 <div id="game-container">
-    <div id="intro-screen" class="overlay">
-        <div class="glass-box">
-            <h2 id="txt-intro-title">CARREGANDO...</h2>
-            <p id="txt-intro-desc">Aguarde o carregamento!</p>
-            <button class="btn-play" onclick="triggerSequence('START')" id="txt-btn-play" style="display:none;">JOGAR AGORA</button>
-        </div>
-    </div>
-
-    <div id="countdown-overlay" class="overlay">
-        <div id="countdown-mode"></div>
-        <div id="countdown-msg">PRONTO?</div>
-        <div id="countdown-num">3</div>
-    </div>
-
-    <div id="hud">
-        <p id="score-board">0</p>
-        <div id="combo-board">COMBO 0</div>
-    </div>
-    <div id="judgment-text"></div>
-    <canvas id="gameCanvas"></canvas>
-
+    <div id="intro-screen" class="overlay"><div class="glass-box"><h2 id="txt-intro-title">CARREGANDO...</h2><p id="txt-intro-desc">Aguarde!</p><button class="btn-play" onclick="triggerSequence('START')" id="txt-btn-play" style="display:none;">JOGAR AGORA</button></div></div>
+    <div id="countdown-overlay" class="overlay"><div id="countdown-mode"></div><div id="countdown-msg">PRONTO?</div><div id="countdown-num">3</div></div>
+    <div id="hud"><p id="score-board">0</p><div id="combo-board">COMBO 0</div></div>
+    <div id="judgment-text"></div><canvas id="gameCanvas"></canvas>
     <div id="game-over">
-        <h1 id="txt-over-title">SÓ VAMOS!</h1>
-        <h2 id="txt-over-sub">Rumo ao Hexa⚽</h2>
-        <p id="final-result"></p>
+        <h1 id="txt-over-title">SÓ VAMOS!</h1><h2 id="txt-over-sub">Rumo ao Hexa⚽</h2><p id="final-result"></p>
         <button class="btn-action btn-retry" onclick="resetGame()">JOGAR DE NOVO</button>
         <button class="btn-action btn-ranking" onclick="openRankingInput()" id="btn-save-rank">SALVAR RECORDE</button> 
         <button class="btn-action btn-whatsapp" id="share-wa">COMPARTILHAR</button>
         <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')"></button>
     </div>
-
-    <div id="modal-rank-input" class="modal-overlay">
-        <div class="rank-box">
-            <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue); margin-bottom:15px;">NOVO RECORDE!</h2>
-            <input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10">   
-            <button class="btn-action btn-retry" onclick="submitScore()" style="width:90%">ENVIAR</button>     
-            <button class="btn-action btn-close" onclick="closeModal('modal-rank-input')" style="width:90%">FECHAR</button>
-        </div>
-    </div>
-
-    <div id="modal-rank-board" class="modal-overlay">
-        <div class="rank-box">
-            <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue)">TOP CRAQUES</h2>
-            <div class="rank-table-wrapper">
-                <table class="rank-table">
-                    <thead><tr><th>Rank</th><th>Nome</th><th>Gols</th><th>Combo</th></tr></thead>
-                    <tbody id="rank-list-body"></tbody>
-                </table>
-            </div>
-            <button class="btn-action btn-retry" onclick="closeModal('modal-rank-board')" style="width:90%">OK</button>
-        </div>
-    </div>
+    <div id="modal-rank-input" class="modal-overlay"><div class="rank-box"><h2>NOVO RECORDE!</h2><input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10"><button class="btn-action btn-retry" onclick="submitScore()" style="width:90%">ENVIAR</button><button class="btn-action btn-close" onclick="closeModal('modal-rank-input')" style="width:90%">FECHAR</button></div></div>
+    <div id="modal-rank-board" class="modal-overlay"><div class="rank-box"><h2>TOP CRAQUES</h2><div class="rank-table-wrapper"><table class="rank-table"><thead><tr><th>Rank</th><th>Nome</th><th>Gols</th><th>Combo</th></tr></thead><tbody id="rank-list-body"></tbody></table></div><button class="btn-action btn-retry" onclick="closeModal('modal-rank-board')" style="width:90%">OK</button></div></div>
 </div>
 
 <script>
     const LOCALE = {
         introTitle: "COMO JOGAR",
         introDesc: "Toque na tela quando a bola\nchegar na boné do DIBO!\nPERFEITO: 10 pts / BOM: 5 pts\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO\num lado ao outro!",
-        btnPlay: "JOGAR AGORA",
-        msgEasy: "TOQUE NA TELA!",
-        msgHard: "AGORA, MEXA DIBO!",
-        msgExtreme: "MEXA MAIS RÁPIDO!",
-        overTitle: "SÓ VAMOS!",
-        overSub: "Rumo ao Hexa⚽",
-        btnRetry: "JOGAR DE NOVO",
-        btnShare: "COMPARTILHAR",
-        btnLink: "Ainda não conhece o DIBO?👀",
-        linkUrl: "https://www.instagram.com/deboacomdibo",
+        btnPlay: "JOGAR AGORA", msgEasy: "TOQUE NA TELA!", msgHard: "AGORA, MEXA DIBO!", msgExtreme: "MEXA MAIS RÁPIDO!",
+        overTitle: "SÓ VAMOS!", overSub: "Rumo ao Hexa⚽", btnRetry: "JOGAR DE NOVO", btnShare: "COMPARTILHAR",
+        btnLink: "Ainda não conhece o DIBO?👀", linkUrl: "https://www.instagram.com/deboacomdibo",
         shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no DIBO: Rumo ao Hexa⚽ Consegue superar?`
     };
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
     const countdownOverlay = document.getElementById('countdown-overlay');
-    const countdownMsg = document.getElementById('countdown-msg');
-    const countdownMode = document.getElementById('countdown-mode');
-    const countdownNum = document.getElementById('countdown-num');
     const overScreen = document.getElementById('game-over');
     const judgmentEl = document.getElementById('judgment-text');
     const scoreEl = document.getElementById('score-board');
     const comboEl = document.getElementById('combo-board');
 
-    let lastTime = 0, targetFPS = 60, score = 0, combo = 0, maxCombo = 0;
-    let isGameOver = false, gameState = 'INTRO', isSubmitting = false;
+    let lastTime = 0, targetFPS = 60, score = 0, combo = 0, maxCombo = 0, isGameOver = false, gameState = 'INTRO', isSubmitting = false;
     let currentDiboImg, particles = [], balls = [], currentMode = 'EASY';
     const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
     const GRAVITY = { EASY: 0.35, HARD: 0.4, EXTREME: 0.4 };
@@ -208,19 +107,20 @@
 
     function triggerSequence(type) {
         gameState = 'SEQUENCE'; document.getElementById('intro-screen').style.display = 'none';
-        countdownOverlay.style.display = 'flex'; countdownNum.style.display = 'none';
-        if(type === 'START') { countdownMsg.innerText = LOCALE.msgEasy; countdownMode.innerText = "FÁCIL"; }
-        else if(type === 'HARD') { countdownMsg.innerText = LOCALE.msgHard; countdownMode.innerText = "DIFÍCIL"; }
-        else { countdownMsg.innerText = LOCALE.msgExtreme; countdownMode.innerText = "EXTREMO"; }
+        countdownOverlay.style.display = 'flex';
+        const msg = type === 'START' ? LOCALE.msgEasy : (type === 'HARD' ? LOCALE.msgHard : LOCALE.msgExtreme);
+        document.getElementById('countdown-msg').innerText = msg;
+        document.getElementById('countdown-mode').innerText = type;
+        document.getElementById('countdown-num').style.display = 'none';
         setTimeout(() => {
-            countdownMsg.innerText = "PRONTO?"; countdownMode.innerText = ""; countdownNum.style.display = 'block';
-            let count = 3; countdownNum.innerText = count;
-            const timer = setInterval(() => { count--; if (count > 0) countdownNum.innerText = count; else { clearInterval(timer); countdownOverlay.style.display = 'none'; gameState = 'PLAYING'; balls = []; spawnBall(); if(currentMode === 'EXTREME') spawnBall(800); } }, 1000);
+            document.getElementById('countdown-num').style.display = 'block';
+            let count = 3; document.getElementById('countdown-num').innerText = count;
+            const timer = setInterval(() => { count--; if (count > 0) document.getElementById('countdown-num').innerText = count; else { clearInterval(timer); countdownOverlay.style.display = 'none'; gameState = 'PLAYING'; balls = []; spawnBall(); if(currentMode === 'EXTREME') spawnBall(800); } }, 1000);
         }, 1200);
     }
 
     function spawnBall(delay = 0) {
-        setTimeout(() => { if(isGameOver || gameState !== 'PLAYING') return; balls.push({ x: (currentMode === 'EASY') ? canvas.width/2 : Math.random()*(canvas.width-120)+60, y: -50, r: Math.min(canvas.width * 0.12, 45), sx: 0, sy: 0, active: true, alreadyHit: false }); }, delay);
+        setTimeout(() => { if(isGameOver || gameState !== 'PLAYING') return; balls.push({ x: (currentMode === 'EASY') ? canvas.width/2 : Math.random()*(canvas.width-120)+60, y: -50, r: Math.min(canvas.width * 0.12, 45), sx: 0, sy: 0, active: true }); }, delay);
     }
 
     function handleInput(e) {
@@ -230,20 +130,17 @@
         if (currentMode !== 'EASY') dibo.targetX = inputX - dibo.w / 2;
 
         balls.forEach(ball => {
-            if (ball.active && !ball.alreadyHit) { 
+            if (ball.active) { 
                 const distX = Math.abs(ball.x - (dibo.x + dibo.w / 2));
                 const headY = dibo.y + (dibo.h * 0.05); 
                 const distY = ball.y + ball.r - headY;
 
-                // 🚩 판정 범위 대폭 확장 (60 -> 90) : 더 잘 맞게 수정
-                if (distX < dibo.w * 0.7 && Math.abs(distY) < 95) {
+                // 🚩 판정 박스 60px 복구
+                if (distX < dibo.w * 0.65 && Math.abs(distY) < 60) {
                     const absDistY = Math.abs(distY);
-                    // 🚩 Perfect 범위 확장 (22 -> 30) : 콤보 더 잘 쌓이게 수정
-                    const isPerfect = absDistY < 32;
-                    const isGood = absDistY < 95;
-
-                    if (isPerfect || isGood) {
-                        ball.alreadyHit = true;
+                    // 🚩 Perfect 범위 30px 적용
+                    const isPerfect = absDistY < 30;
+                    if (isPerfect || absDistY < 60) {
                         if (isPerfect) {
                             score += 10; combo++; if(combo > maxCombo) maxCombo = combo;
                             if (combo >= 5) document.getElementById('game-container').classList.add('golden-combo');
@@ -251,7 +148,7 @@
                         } else {
                             score += 5; combo = 0; document.getElementById('game-container').classList.remove('golden-combo'); showJudgment('BOM!', '#ffffff');
                         }
-                        ball.sy = -13; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.23;
+                        ball.sy = -13; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.25;
                         currentDiboImg = images.hit; setTimeout(() => { if(!isGameOver) currentDiboImg = images.idle; }, 200);
                         createParticles(ball.x, ball.y, isPerfect ? 15 : 8); updateDifficulty();
                     }
@@ -271,8 +168,8 @@
 
     function update(dt) {
         if (gameState !== 'PLAYING' || isGameOver) return;
-        const timeScale = Math.min(dt / (1000 / targetFPS), 2.0); // dt 폭주 방지
-        if (currentMode !== 'EASY') dibo.x += (dibo.targetX - dibo.x) * Math.min(0.2 * timeScale, 1);
+        const timeScale = Math.min(dt / (1000 / targetFPS), 2.0);
+        if (currentMode !== 'EASY') dibo.x += (dibo.targetX - dibo.x) * Math.min(0.22 * timeScale, 1); // 이동속도 최적화
         balls.forEach((ball, idx) => {
             ball.sy += GRAVITY[currentMode] * timeScale; ball.x += ball.sx * timeScale; ball.y += ball.sy * timeScale;
             if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.sx *= -1;
@@ -304,19 +201,19 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     async function submitScore() {
         if (isSubmitting) return;
-        const nick = document.getElementById('nickname').value; if(!nick) return alert("Por favor, digite seu nickname!");
+        const nick = document.getElementById('nickname').value; if(!nick) return alert("Por favor, digite!");
         const btn = document.querySelector('#modal-rank-input .btn-retry');
         isSubmitting = true; btn.disabled = true; btn.innerText = "ENVIANDO...";
-        try { await fetch(scriptUrl, { method: "POST", mode: 'no-cors', body: JSON.stringify({ nickname: nick, score, combo: maxCombo }) }); document.getElementById('nickname').value = ""; closeModal('modal-rank-input'); setTimeout(() => { showRankingBoard(); isSubmitting = false; }, 500); } catch (e) { alert("Erro ao conectar."); btn.disabled = false; btn.innerText = "ENVIAR"; isSubmitting = false; }
+        try { await fetch(scriptUrl, { method: "POST", mode: 'no-cors', body: JSON.stringify({ nickname: nick, score, combo: maxCombo }) }); document.getElementById('nickname').value = ""; closeModal('modal-rank-input'); setTimeout(() => { showRankingBoard(); isSubmitting = false; }, 500); } catch (e) { alert("Erro!"); btn.disabled = false; btn.innerText = "ENVIAR"; isSubmitting = false; }
     }
     async function showRankingBoard() {
         document.getElementById('modal-rank-board').style.display = 'flex';
-        const body = document.getElementById('rank-list-body'); body.innerHTML = "<tr><td colspan='4' style='text-align:center; padding: 20px;'>Carregando...</td></tr>";
+        const body = document.getElementById('rank-list-body'); body.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
         try {
             const resp = await fetch(scriptUrl + "?t=" + new Date().getTime()); const ranks = await resp.json();
-            body.innerHTML = ""; if (ranks.length === 0) { body.innerHTML = "<tr><td colspan='4'>Nenhum recorde ainda!</td></tr>"; return; }
+            body.innerHTML = ""; if (ranks.length === 0) { body.innerHTML = "<tr><td colspan='4'>Vazio!</td></tr>"; return; }
             ranks.forEach((row, idx) => { if(idx >= 50) return; const tr = document.createElement('tr'); if(idx === 0) tr.style.backgroundColor = "rgba(254, 209, 0, 0.1)"; const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : idx + 1; tr.innerHTML = `<td>${medal}</td><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>`; body.innerHTML += tr.outerHTML; });
-        } catch (e) { body.innerHTML = "<tr><td colspan='4'>Erro ao car거기.</td></tr>"; }
+        } catch (e) { body.innerHTML = "<tr><td colspan='4'>Erro.</td></tr>"; }
     }
     requestAnimationFrame(draw);
 </script>
