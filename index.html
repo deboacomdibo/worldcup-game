@@ -15,12 +15,24 @@
             --whatsapp-green: #25D366;
         }
         
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: 'Kanit', sans-serif; background-color: #009739; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+            font-family: 'Kanit', sans-serif; background-color: #009739; 
+            touch-action: none;
+        }
 
         #game-container {
             position: relative; width: 100%; height: 100%;
             background: url('background.png') no-repeat center center;
             background-size: cover; background-color: #009739;
+            transition: background-color 0.5s ease; /* 황금빛 전환 효과 */
+        }
+
+        /* 🚩 황금빛 콤보 모드 스타일 */
+        #game-container.golden-combo {
+            background-image: linear-gradient(rgba(254, 209, 0, 0.35), rgba(254, 209, 0, 0.35)), url('background.png') !important;
+            background-blend-mode: color;
+            background-color: var(--brazil-yellow);
         }
 
         canvas { display: block; touch-action: none; width: 100%; height: 100%; }
@@ -46,28 +58,14 @@
         }
 
         #countdown-overlay {
-            display: none; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center;
-            text-align: center;
-            width: 100%;
-            z-index: 150;
-            font-family: 'Luckiest Guy'; 
-            color: var(--brazil-yellow);
-            -webkit-text-stroke: 3px var(--primary-blue); 
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; width: 100%; z-index: 150; font-family: 'Luckiest Guy'; 
+            color: var(--brazil-yellow); -webkit-text-stroke: 3px var(--primary-blue); 
             text-shadow: 4px 4px 0px rgba(0,0,0,0.3);
         }
-        #countdown-mode { font-size: 2rem; color: white; margin-bottom: 10px; }
-        #countdown-msg { font-size: 3rem; margin-bottom: 10px; color: white; }
-        #countdown-num { 
-            font-size: 10rem; 
-            line-height: 1; 
-            display: inline-block; 
-            margin: 0;
-            padding: 0.2em;
-            vertical-align: middle;
-        }
+        #countdown-mode { font-size: 2rem; color: white; margin-bottom: 10px; -webkit-text-stroke: 0; }
+        #countdown-msg { font-size: 3rem; margin-bottom: 10px; color: white; -webkit-text-stroke: 0; }
+        #countdown-num { font-size: 10rem; line-height: 1; display: inline-block; padding: 0.2em; vertical-align: middle; }
 
         #hud { position: absolute; top: 20px; width: 100%; text-align: center; pointer-events: none; z-index: 50; display: flex; flex-direction: column; align-items: center; }
         #score-board { font-family: 'Luckiest Guy'; font-size: 4rem; margin: 0; color: var(--brazil-yellow); -webkit-text-stroke: 2px var(--primary-blue); }
@@ -79,6 +77,7 @@
             pointer-events: none; z-index: 60; -webkit-text-stroke: 1px var(--primary-blue);
         }
 
+        /* 게임오버 레이아웃 */
         #game-over {
             display: none; position: absolute; top: 0; left: 0; 
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -86,116 +85,42 @@
             color: white; z-index: 250; text-align: center;
             padding: 10px; box-sizing: border-box;
         }
-        
         #game-over h1 { font-size: 1.8rem !important; margin: 0 0 5px 0 !important; color: var(--brazil-yellow); font-family: 'Luckiest Guy'; }
         #game-over h2 { font-size: 1rem !important; margin: 0 0 8px 0 !important; }
-        #final-result { font-size: 1rem !important; margin: 8px 0 !important; line-height: 1.2; }
-        
+        #final-result { font-size: 1rem !important; margin: 8px 0 !important; line-height: 1.2; font-weight: 800; }
+
         .btn-action { 
-            width: 85%; max-width: 280px; 
-            height: 42px; 
-            padding: 0 !important; 
-            margin: 4px !important; 
-            border: none; border-radius: 50px; 
+            width: 85%; max-width: 280px; height: 42px; padding: 0 !important; 
+            margin: 4px !important; border: none; border-radius: 50px; 
             font-family: 'Kanit'; font-weight: 800; font-size: 0.9rem !important;
             cursor: pointer; display: flex; justify-content: center; align-items: center;
         }
-        
-        .btn-link {
-            background: var(--primary-blue) !important;
-            color: #ffffff !important; 
-            border: 2px solid var(--brazil-yellow) !important;
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.85rem !important;
-            overflow: visible !important;
-        }
-        
-        #txt-btn-link {
-            min-height: 40px;
-            line-height: 1.2;
-            white-space: normal;
-        }
-        .btn-close { 
-            background: #888888; 
-            color: white; 
-        }
-        
         .btn-retry { background: var(--brazil-yellow); color: var(--primary-blue); }
+        .btn-ranking { background: #ffffff; color: var(--primary-blue); border: 2px solid var(--primary-blue); }
         .btn-whatsapp { background: var(--whatsapp-green); color: white; }
-        .btn-link { background: var(--primary-blue); color: white; font-size: 0.9rem; border: 1.5px solid var(--brazil-yellow); }
+        .btn-link { background: var(--primary-blue) !important; color: white !important; border: 2px solid var(--brazil-yellow) !important; font-size: 0.85rem !important; }
+        .btn-close { background: #888888; color: white; }
 
-        .btn-ranking { 
-            background: #ffffff; 
-            color: var(--primary-blue); 
-            border: 2px solid var(--primary-blue); 
-            margin-top: 5px;
-        }
-        
+        /* 랭킹 모달 */
         .modal-overlay {
             display: none; position: absolute; top: 0; left: 0; 
             width: 100%; height: 100%; background: rgba(0,0,0,0.7); 
             z-index: 300; justify-content: center; align-items: center;
         }
-        
         .rank-box {
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 35px; 
-            padding: 25px; 
-            width: 85%; 
-            max-width: 340px; 
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 35px; padding: 25px; width: 85%; max-width: 340px; 
+            display: flex; flex-direction: column; align-items: center; 
+            border: 1px solid rgba(255,255,255,0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
-        
         .input-nickname {
-            width: 90%; 
-            padding: 12px; 
-            border-radius: 15px; 
-            border: 1px solid rgba(0,0,0,0.1);
-            margin-bottom: 15px; 
-            font-family: 'Kanit'; 
-            font-size: 1.1rem; 
-            text-align: center;
-            outline: none;
+            width: 90%; padding: 12px; border-radius: 15px; border: 1px solid rgba(0,0,0,0.1);
+            margin-bottom: 15px; font-family: 'Kanit'; font-size: 1.1rem; text-align: center; outline: none;
         }
-        
-        .rank-box .btn-action {
-            width: 90% !important; 
-            margin: 5px 0 !important; 
-            height: 45px;
-        }
-        
-        .rank-table-wrapper {
-            max-height: 200px; 
-            overflow-y: auto;
-            margin: 10px 0;
-        }
-        
+        .rank-table-wrapper { width: 100%; max-height: 200px; overflow-y: auto; margin: 10px 0; border-radius: 10px; }
         .rank-table { width: 100%; border-collapse: collapse; }
-        .rank-table th { 
-            position: sticky; 
-            top: 0; 
-            background: var(--primary-blue); 
-            color: white; 
-            padding: 8px; 
-            font-size: 0.8rem; 
-            text-align: center !important; 
-        }
-    
-        .rank-table td { 
-            padding: 10px; 
-            border-bottom: 1px solid rgba(0,0,0,0.05); 
-            font-size: 0.9rem; 
-            color: #333; 
-            text-align: center !important; 
-            vertical-align: middle;
-        }
+        .rank-table th { position: sticky; top: 0; background: var(--primary-blue); color: white; padding: 8px; font-size: 0.8rem; text-align: center; }
+        .rank-table td { padding: 10px; border-bottom: 1px solid rgba(0,0,0,0.05); font-size: 0.9rem; color: #333; text-align: center; vertical-align: middle; }
     </style>
 </head>
 <body>
@@ -204,7 +129,7 @@
     <div id="intro-screen" class="overlay">
         <div class="glass-box">
             <h2 id="txt-intro-title">CARREGANDO...</h2>
-            <p id="txt-intro-desc">Aguarde o carregamento dos atletas!</p>
+            <p id="txt-intro-desc">Aguarde o carregamento!</p>
             <button class="btn-play" onclick="triggerSequence('START')" id="txt-btn-play" style="display:none;">JOGAR AGORA</button>
         </div>
     </div>
@@ -219,55 +144,57 @@
         <p id="score-board">0</p>
         <div id="combo-board">COMBO 0</div>
     </div>
-    
     <div id="judgment-text"></div>
     <canvas id="gameCanvas"></canvas>
 
     <div id="game-over">
-        <h1 id="txt-over-title" style="color: var(--brazil-yellow); font-family: 'Luckiest Guy'; font-size: 3rem; margin-bottom: 0;"></h1>
-        <h2 id="txt-over-sub" style="margin-top: 0; font-weight: 800;"></h2>
-        <p id="final-result" style="font-size: 1.5rem; margin: 20px 0; font-weight: 800; white-space: pre-line;"></p>
+        <h1 id="txt-over-title">SÓ VAMOS!</h1>
+        <h2 id="txt-over-sub">Rumo ao Hexa⚽</h2>
+        <p id="final-result"></p>
         <button class="btn-action btn-retry" onclick="resetGame()">JOGAR DE NOVO</button>
         <button class="btn-action btn-ranking" onclick="openRankingInput()" id="btn-save-rank">SALVAR RECORDE</button> 
         <button class="btn-action btn-whatsapp" id="share-wa">COMPARTILHAR</button>
         <button id="txt-btn-link" class="btn-action btn-link" onclick="window.open(LOCALE.linkUrl, '_blank')"></button>
     </div>
 
-<div id="modal-rank-input" class="modal-overlay">
-    <div class="rank-box">
-        <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue); margin-bottom:15px;">NOVO RECORDE!</h2>
-        <input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10">   
-        <button class="btn-action btn-retry" onclick="submitScore()">ENVIAR</button>    
-        <button class="btn-action btn-close" onclick="closeModal('modal-rank-input')">FECHAR</button>
+    <div id="modal-rank-input" class="modal-overlay">
+        <div class="rank-box">
+            <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue); margin-bottom:15px;">NOVO RECORDE!</h2>
+            <input type="text" id="nickname" class="input-nickname" placeholder="Nickname" maxlength="10">   
+            <button class="btn-action btn-retry" onclick="submitScore()" style="width:90%">ENVIAR</button>     
+            <button class="btn-action btn-close" onclick="closeModal('modal-rank-input')" style="width:90%">FECHAR</button>
+        </div>
     </div>
-</div>
 
-<div id="modal-rank-board" class="modal-overlay">
-    <div class="rank-box">
-        <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue)">TOP CRAQUES</h2>
-        <table class="rank-table">
-            <thead><tr><th>Rank</th><th>Nome</th><th>Gols</th><th>Combo</th></tr></thead>
-            <tbody id="rank-list-body"></tbody>
-        </table>
-        <button class="btn-action btn-retry" onclick="closeModal('modal-rank-board')" style="width:100%; margin-top:15px">OK</button>
+    <div id="modal-rank-board" class="modal-overlay">
+        <div class="rank-box">
+            <h2 style="font-family:'Luckiest Guy'; color:var(--primary-blue)">TOP CRAQUES</h2>
+            <div class="rank-table-wrapper">
+                <table class="rank-table">
+                    <thead><tr><th>Rank</th><th>Nome</th><th>Gols</th><th>Combo</th></tr></thead>
+                    <tbody id="rank-list-body"></tbody>
+                </table>
+            </div>
+            <button class="btn-action btn-retry" onclick="closeModal('modal-rank-board')" style="width:90%">OK</button>
+        </div>
     </div>
 </div>
 
 <script>
     const LOCALE = {
         introTitle: "COMO JOGAR",
-        introDesc: "Toque na tela quando a bola\nchegar na boné do DIBO!\nPERFEITO: 10 pts / BOM: 5 pts\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO\nde um lado ao outro",
+        introDesc: "Toque na tela quando a bola\nchegar na boné do DIBO!\nPERFEITO: 10 pts / BOM: 5 pts\n\nNo modo DIFÍCIL e EXTREMO,\nMEXA o DIBO!",
         btnPlay: "JOGAR AGORA",
         msgEasy: "TOQUE NA TELA!",
         msgHard: "AGORA, MEXA DIBO!",
-        msgExtreme: "MEXA DIBO MAIS RÁPIDO!",
+        msgExtreme: "MEXA MAIS RÁPIDO!",
         overTitle: "SÓ VAMOS!",
         overSub: "Rumo ao Hexa⚽",
         btnRetry: "JOGAR DE NOVO",
         btnShare: "COMPARTILHAR",
-        btnLink: "Ainda não conhece o DIBO?👀",
+        btnLink: "Conheça o DIBO!👀",
         linkUrl: "https://www.instagram.com/deboacomdibo",
-        shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no DIBO: Rumo ao Hexa⚽ Consegue me superar?`
+        shareMsg: (s, c) => `Fiz ${s} gols e ${c} combos no DIBO!⚽ Consegue superar?`
     };
 
     const canvas = document.getElementById('gameCanvas');
@@ -281,72 +208,43 @@
     const scoreEl = document.getElementById('score-board');
     const comboEl = document.getElementById('combo-board');
 
+    // 시간 보정 변수
+    let lastTime = 0;
+    const targetFPS = 60;
+
     const images = { idle: new Image(), hit: new Image(), fail: new Image(), ball: new Image() };
     let loadedImages = 0;
-    const totalImages = 4;
-
     function onImageLoad() {
         loadedImages++;
-        if (loadedImages === totalImages) {
-            document.getElementById('txt-intro-title').innerText = LOCALE.introTitle;
-            document.getElementById('txt-intro-desc').innerText = LOCALE.introDesc;
+        if (loadedImages === 4) {
             document.getElementById('txt-btn-play').style.display = 'inline-block';
             initTexts();
         }
     }
+    images.idle.onload = onImageLoad; images.hit.onload = onImageLoad;
+    images.fail.onload = onImageLoad; images.ball.onload = onImageLoad;
+    images.idle.src = 'dibo_idle.png'; images.hit.src = 'dibo_hit.png';
+    images.fail.src = 'dibo_fail.png'; images.ball.src = 'ball.png';
 
-    images.idle.onload = onImageLoad;
-    images.hit.onload = onImageLoad;
-    images.fail.onload = onImageLoad;
-    images.ball.onload = onImageLoad;
-
-    images.idle.src = 'dibo_idle.png';
-    images.hit.src = 'dibo_hit.png';
-    images.fail.src = 'dibo_fail.png';
-    images.ball.src = 'ball.png';
-
-    let score = 0; let combo = 0; let maxCombo = 0; let isGameOver = false; 
-    let gameState = 'INTRO'; 
-    let currentDiboImg = images.idle; 
-    let particles = []; let balls = [];
-    let currentMode = 'EASY';
-
-    // 시간 기반 보정을 위한 변수 추가
-    let lastTime = 0;
-    const targetFPS = 60;
-
+    let score = 0, combo = 0, maxCombo = 0, isGameOver = false, gameState = 'INTRO';
+    let isSubmitting = false; // 🚩 여기에 추가! (제출 상태를 기억하는 변수)
+    let currentDiboImg = images.idle, particles = [], balls = [], currentMode = 'EASY';
     const GRAVITY = { EASY: 0.35, HARD: 0.4, EXTREME: 0.4 };
     let dibo = { w: 0, h: 0, x: 0, y: 0, targetX: 0 };
 
     function initTexts() {
-        const setText = (id, text) => {
-            const el = document.getElementById(id);
-            if (el) el.innerText = text;
-        };
-    
-        setText('txt-intro-title', LOCALE.introTitle);
-        setText('txt-intro-desc', LOCALE.introDesc);
-        setText('txt-btn-play', LOCALE.btnPlay);
-        setText('txt-over-title', LOCALE.overTitle);
-        setText('txt-over-sub', LOCALE.overSub);
-        setText('txt-btn-retry', LOCALE.btnRetry);
-        setText('share-wa', LOCALE.btnShare);
-        setText('txt-btn-link', LOCALE.btnLink);
-        
-        const linkBtn = document.getElementById('txt-btn-link');
-        if(linkBtn) {
-            linkBtn.innerText = LOCALE.btnLink;
-        }
+        const setText = (id, txt) => { if(document.getElementById(id)) document.getElementById(id).innerText = txt; };
+        setText('txt-intro-title', LOCALE.introTitle); setText('txt-intro-desc', LOCALE.introDesc);
+        setText('txt-btn-play', LOCALE.btnPlay); setText('txt-over-title', LOCALE.overTitle);
+        setText('txt-over-sub', LOCALE.overSub); setText('txt-btn-retry', LOCALE.btnRetry);
+        setText('share-wa', LOCALE.btnShare); setText('txt-btn-link', LOCALE.btnLink);
     }
 
-   function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        dibo.h = canvas.height * 0.5; 
-        dibo.w = dibo.h * (220 / 360); 
-        dibo.x = canvas.width / 2 - dibo.w / 2;
-        dibo.targetX = dibo.x;
-        dibo.y = canvas.height - dibo.h - 40; 
+    function resize() {
+        canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        dibo.h = canvas.height * 0.5; dibo.w = dibo.h * (220 / 360);
+        dibo.x = canvas.width / 2 - dibo.w / 2; dibo.targetX = dibo.x;
+        dibo.y = canvas.height - dibo.h - 40;
     }
     window.addEventListener('resize', resize); resize();
 
@@ -356,29 +254,19 @@
         countdownOverlay.style.display = 'flex';
         countdownNum.style.display = 'none';
         
-        let msg = ""; let mName = "";
-        if(type === 'START') { msg = LOCALE.msgEasy; mName = "MODO: FÁCIL"; }
-        else if(type === 'HARD') { msg = LOCALE.msgHard; mName = "MODO: DIFÍCIL"; }
-        else { msg = LOCALE.msgExtreme; mName = "MODO: EXTREMO"; }
-        
-        countdownMsg.innerText = msg;
-        countdownMode.innerText = mName;
+        if(type === 'START') { countdownMsg.innerText = LOCALE.msgEasy; countdownMode.innerText = "FÁCIL"; }
+        else if(type === 'HARD') { countdownMsg.innerText = LOCALE.msgHard; countdownMode.innerText = "DIFÍCIL"; }
+        else { countdownMsg.innerText = LOCALE.msgExtreme; countdownMode.innerText = "EXTREMO"; }
 
         setTimeout(() => {
-            countdownMsg.innerText = "PRONTO?";
-            countdownMode.innerText = "";
-            countdownNum.style.display = 'block';
-            let count = 3;
-            countdownNum.innerText = count;
+            countdownMsg.innerText = "PRONTO?"; countdownMode.innerText = ""; countdownNum.style.display = 'block';
+            let count = 3; countdownNum.innerText = count;
             const timer = setInterval(() => {
                 count--;
-                if (count > 0) { countdownNum.innerText = count; }
+                if (count > 0) countdownNum.innerText = count;
                 else {
-                    clearInterval(timer);
-                    countdownOverlay.style.display = 'none';
-                    gameState = 'PLAYING';
-                    balls = [];
-                    spawnBall();
+                    clearInterval(timer); countdownOverlay.style.display = 'none';
+                    gameState = 'PLAYING'; balls = []; spawnBall();
                     if(currentMode === 'EXTREME') spawnBall(800);
                 }
             }, 1000);
@@ -388,71 +276,83 @@
     function spawnBall(delay = 0) {
         setTimeout(() => {
             if(isGameOver || gameState !== 'PLAYING') return;
-            const isRandom = (currentMode !== 'EASY');
             balls.push({
-                x: isRandom ? Math.random() * (canvas.width - 120) + 60 : canvas.width / 2,
-                y: -50, 
-                r: Math.min(canvas.width * 0.12, 45), 
-                sx: 0, sy: 0, active: true
+                x: (currentMode === 'EASY') ? canvas.width/2 : Math.random()*(canvas.width-120)+60,
+                y: -50, r: Math.min(canvas.width * 0.12, 45), sx: 0, sy: 0, active: true, alreadyHit: false
             });
         }, delay);
     }
 
     function handleInput(e) {
         if (gameState !== 'PLAYING' || isGameOver) return;
+        if (e.type === 'mousedown' && 'ontouchstart' in window) return;
+
         const inputX = (e.touches ? e.touches[0].clientX : e.clientX);
         if (currentMode !== 'EASY') dibo.targetX = inputX - dibo.w / 2;
 
         balls.forEach(ball => {
-            if (!ball.active) return;
-            const distX = Math.abs(ball.x - (dibo.x + dibo.w / 2));
-            const headY = dibo.y + (dibo.h * 0.05); 
-            const distY = ball.y + ball.r - headY;
+            if (ball.active && !ball.alreadyHit) { 
+                const distX = Math.abs(ball.x - (dibo.x + dibo.w / 2));
+                const headY = dibo.y + (dibo.h * 0.05); 
+                const distY = ball.y + ball.r - headY;
 
-            if (distX < dibo.w * 0.6 && Math.abs(distY) < 60) {
-                const isPerfect = Math.abs(distY) < 20; 
-                if (isPerfect || Math.abs(distY) < 55) {
-                    if (isPerfect) {
-                        score += 10; combo++;
-                        if(combo > maxCombo) maxCombo = combo;
-                        if (combo % 10 === 0) { score += 20; showJudgment('BÔNUS +20!', '#ff3300'); }
-                        else showJudgment('PERFEITO!', '#fed100');
-                    } else {
-                        score += 5; combo = 0; showJudgment('BOM!', '#ffffff');
+                if (distX < dibo.w * 0.6 && Math.abs(distY) < 60) {
+                    const absDistY = Math.abs(distY);
+                    const isPerfect = absDistY < 22;
+                    const isGood = absDistY < 60;
+
+                    if (isPerfect || isGood) {
+                        ball.alreadyHit = true;
+                        if (isPerfect) {
+                            score += 10; combo++;
+                            if(combo > maxCombo) maxCombo = combo;
+
+                            // 🚩 황금빛 배경 모드 활성화 (5콤보 이상)
+                            if (combo >= 5) {
+                                document.getElementById('game-container').classList.add('golden-combo');
+                            }
+
+                            if (combo > 0 && combo % 10 === 0) {
+                                score += 20;
+                                showJudgment('COMBO BÔNUS +20!', '#ff3300');
+                            } else showJudgment('PERFEITO!', '#fed100');
+                        } else {
+                            score += 5;
+                            combo = 0; // BOM 판정 시 콤보 초기화
+                            // 🚩 황금빛 모드 해제
+                            document.getElementById('game-container').classList.remove('golden-combo');
+                            showJudgment('BOM!', '#ffffff');
+                        }
+                        
+                        ball.sy = -13; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.2;
+                        currentDiboImg = images.hit;
+                        setTimeout(() => { if(!isGameOver) currentDiboImg = images.idle; }, 250);
+                        createParticles(ball.x, ball.y, isPerfect ? 15 : 8);
+                        updateDifficulty();
                     }
-                    updateDifficulty();
-                    ball.sy = -13; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.2;
-                    currentDiboImg = images.hit;
-                    setTimeout(() => { if(!isGameOver) currentDiboImg = images.idle; }, 250);
-                    createParticles(ball.x, ball.y, isPerfect ? 15 : 8);
                 }
             }
         });
     }
 
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, {passive: false});
+    canvas.addEventListener('touchstart', (e) => { if (e.cancelable) e.preventDefault(); handleInput(e); }, {passive: false});
+    canvas.addEventListener('touchmove', (e) => { if (e.cancelable) e.preventDefault(); handleInput(e); }, {passive: false});
     canvas.addEventListener('mousedown', handleInput);
-    canvas.addEventListener('touchmove', (e) => { handleInput(e); }, {passive: false});
 
     function updateDifficulty() {
         if (score >= 200 && currentMode !== 'EXTREME') { currentMode = 'EXTREME'; triggerSequence('EXTREME'); }
         else if (score >= 100 && score < 200 && currentMode !== 'HARD') { currentMode = 'HARD'; triggerSequence('HARD'); }
     }
 
-    // 시간 보정 계수(timeScale)를 적용한 물리 업데이트
     function update(dt) {
         if (gameState !== 'PLAYING' || isGameOver) return;
-        
-        // 기준 프레임 대비 현재 프레임의 시간 배율 계산
         const timeScale = dt / (1000 / targetFPS);
 
         if (currentMode !== 'EASY') {
-            // 캐릭터 이동 보정
             dibo.x += (dibo.targetX - dibo.x) * Math.min(0.17 * timeScale, 1);
         }
 
         balls.forEach((ball, idx) => {
-            // 중력 및 이동 속도 보정
             ball.sy += GRAVITY[currentMode] * timeScale;
             ball.x += ball.sx * timeScale; 
             ball.y += ball.sy * timeScale;
@@ -461,16 +361,12 @@
             if (ball.y > canvas.height - 30) endGame();
             if (ball.sy < 0 && ball.y < -100) { balls.splice(idx, 1); spawnBall(200); }
         });
-
         particles.forEach((p, i) => { 
-            p.x += p.vx * timeScale; 
-            p.y += p.vy * timeScale; 
-            p.life -= 0.03 * timeScale; 
-            if (p.life <= 0) particles.splice(i, 1); 
+            p.x += p.vx * timeScale; p.y += p.vy * timeScale; 
+            p.life -= 0.03 * timeScale; if (p.life <= 0) particles.splice(i, 1); 
         });
     }
 
-    // 타임스탬프를 사용하는 draw 함수
     function draw(timestamp) {
         if (!lastTime) lastTime = timestamp;
         const dt = timestamp - lastTime;
@@ -478,21 +374,24 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         let drawImg = isGameOver ? images.fail : currentDiboImg;
-        if (drawImg && drawImg.complete) {
-            ctx.drawImage(drawImg, dibo.x, dibo.y, dibo.w, dibo.h);
-        }
+        if (drawImg.complete) ctx.drawImage(drawImg, dibo.x, dibo.y, dibo.w, dibo.h);
+        
         balls.forEach(ball => {
             ctx.save(); ctx.translate(ball.x, ball.y); ctx.rotate(ball.x * 0.03);
             if (images.ball.complete) ctx.drawImage(images.ball, -ball.r, -ball.r, ball.r*2, ball.r*2);
             ctx.restore();
         });
-        particles.forEach(p => { ctx.globalAlpha = p.life; ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill(); });
-        ctx.globalAlpha = 1;
-        scoreEl.innerText = score;
+        
+        particles.forEach(p => { 
+            ctx.globalAlpha = p.life; ctx.fillStyle = p.c; 
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); ctx.fill(); 
+        });
+        
+        ctx.globalAlpha = 1; 
+        scoreEl.innerText = score; 
         comboEl.innerText = `COMBO ${combo}`;
         
-        // 업데이트 시 시간 간격 전달
-        update(dt);
+        update(dt); 
         requestAnimationFrame(draw);
     }
 
@@ -509,8 +408,11 @@
 
     function endGame() {
         if (isGameOver) return;
-        isGameOver = true;
+        isGameOver = true; 
         currentDiboImg = images.fail;
+        // 🚩 황금빛 모드 해제
+        document.getElementById('game-container').classList.remove('golden-combo');
+        
         setTimeout(() => {
             overScreen.style.display = 'flex';
             document.getElementById('final-result').innerText = `PONTOS: ${score}\nMAX COMBO: ${maxCombo}`;
@@ -519,58 +421,61 @@
     }
 
     function resetGame() { location.reload(); }
-    
+
+    // 랭킹 시스템
     const scriptUrl = "https://script.google.com/macros/s/AKfycbwpErHF4s5usetoSpUzL-ccEY0U9YmKn1whxiG_2o_6sQ0tH5rilKqVN92NXfELbjkn/exec";
-    
-    function openRankingInput() {
-        document.getElementById('modal-rank-input').style.display = 'flex';
-    }
-    
-    function closeModal(id) {
-        document.getElementById(id).style.display = 'none';
-    }
-    
+    function openRankingInput() { document.getElementById('modal-rank-input').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
     async function submitScore() {
+        // 1. 이미 제출 중이면 바로 종료 (중복 클릭 방지 핵심)
+        if (isSubmitting) return; 
+    
         const nick = document.getElementById('nickname').value;
         if(!nick) return alert("Por favor, digite seu nickname!");
     
-        const data = { nickname: nick, score: score, combo: maxCombo };
-        const btn = document.getElementById('btn-save-rank');
+        const btn = document.querySelector('#modal-rank-input .btn-retry'); // ENVIAR 버튼
         
+        // 2. 제출 시작! 플래그를 true로 바꾸고 버튼을 비활성화합니다.
+        isSubmitting = true;
         btn.disabled = true;
         btn.innerText = "ENVIANDO...";
     
         try {
-            await fetch(scriptUrl, {
-                method: "POST",
+            await fetch(scriptUrl, { 
+                method: "POST", 
                 mode: 'no-cors', 
-                body: JSON.stringify(data)
+                body: JSON.stringify({ nickname: nick, score: score, combo: maxCombo }) 
             });
+    
+            // 3. 성공 시 깔끔하게 정리
+            document.getElementById('nickname').value = ""; 
             closeModal('modal-rank-input');
-            showRankingBoard();
+            
+            setTimeout(() => {
+                showRankingBoard();
+                isSubmitting = false; // 제출 완료 후 다시 false로 (나중에 또 게임 할 수 있으니)
+            }, 500);
+    
         } catch (e) {
             console.error(e);
-            alert("Erro ao conectar com o servidor.");
+            alert("Erro ao conectar.");
+            // 4. 에러 발생 시 다시 버튼을 누를 수 있게 풀어줍니다.
             btn.disabled = false;
-            btn.innerText = "SALVAR NO RANKING";
+            btn.innerText = "ENVIAR";
+            isSubmitting = false; 
         }
     }
-    
+
     async function showRankingBoard() {
         document.getElementById('modal-rank-board').style.display = 'flex';
         const body = document.getElementById('rank-list-body');
         body.innerHTML = "<tr><td colspan='4' style='text-align:center; padding: 20px;'>Carregando...</td></tr>";
-    
         try {
             const resp = await fetch(scriptUrl + "?t=" + new Date().getTime());
             const ranks = await resp.json();
-            
             body.innerHTML = "";
-            if (ranks.length === 0) {
-                body.innerHTML = "<tr><td colspan='4'>Nenhum recorde ainda!</td></tr>";
-                return;
-            }
-    
+            if (ranks.length === 0) { body.innerHTML = "<tr><td colspan='4'>Nenhum recorde ainda!</td></tr>"; return; }
             ranks.forEach((row, idx) => {
                 if(idx >= 50) return;
                 const tr = document.createElement('tr');
@@ -579,12 +484,9 @@
                 tr.innerHTML = `<td>${medal}</td><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>`;
                 body.innerHTML += tr.outerHTML;
             });
-        } catch (e) {
-            console.error("Ranking Error:", e);
-            body.innerHTML = "<tr><td colspan='4'>Erro ao carregar ranking.</td></tr>";
-        }
+        } catch (e) { body.innerHTML = "<tr><td colspan='4'>Erro ao carregar ranking.</td></tr>"; }
     }
-    draw();
+    requestAnimationFrame(draw);
 </script>
 </body>
 </html>
