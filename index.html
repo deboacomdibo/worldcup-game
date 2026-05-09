@@ -413,47 +413,79 @@
             balls.push({
                 x: isRandom ? Math.random() * (canvas.width - 120) + 60 : canvas.width / 2,
                 y: -50, 
-                // 모바일에서는 너비의 12%, 하지만 PC에서도 최대 45px를 넘지 않도록 제한
                 r: Math.min(canvas.width * 0.12, 45), 
-                sx: 0, sy: 0, active: true
+                sx: 0, sy: 0, 
+                active: true,
+                alreadyHit: false // 🚩 중복 판정 방지용 플래그
             });
         }, delay);
     }
 
     function handleInput(e) {
         if (gameState !== 'PLAYING' || isGameOver) return;
+        
+        // 🚩 [1] 모바일에서 touch와 mouse가 동시에 일어나는 현상 방지
+        if (e.type === 'mousedown' && 'ontouchstart' in window) return;
+    
         const inputX = (e.touches ? e.touches[0].clientX : e.clientX);
         if (currentMode !== 'EASY') dibo.targetX = inputX - dibo.w / 2;
-
+    
         balls.forEach(ball => {
-            if (!ball.active) return;
-            const distX = Math.abs(ball.x - (dibo.x + dibo.w / 2));
-            const headY = dibo.y + (dibo.h * 0.05); 
-            const distY = ball.y + ball.r - headY;
-
-            if (distX < dibo.w * 0.6 && Math.abs(distY) < 60) {
-                const isPerfect = Math.abs(distY) < 20; 
-                if (isPerfect || Math.abs(distY) < 55) {
-                    if (isPerfect) {
-                        score += 10; combo++;
-                        if(combo > maxCombo) maxCombo = combo;
-                        if (combo % 10 === 0) { score += 20; showJudgment('BÔNUS +20!', '#ff3300'); }
-                        else showJudgment('PERFEITO!', '#fed100');
-                    } else {
-                        score += 5; combo = 0; showJudgment('BOM!', '#ffffff');
+            // 🚩 [2] active하고 아직 점수 계산이 안 된(alreadyHit: false) 공만 처리
+            if (ball.active && !ball.alreadyHit) { 
+                const distX = Math.abs(ball.x - (dibo.x + dibo.w / 2));
+                const headY = dibo.y + (dibo.h * 0.05); 
+                const distY = ball.y + ball.r - headY;
+    
+                // 판정 범위 내에 들어왔을 때
+                if (distX < dibo.w * 0.6 && Math.abs(distY) < 60) {
+                    const absDistY = Math.abs(distY);
+                    const isPerfect = absDistY < 22; 
+                    const isGood = absDistY < 65;
+    
+                    if (isPerfect || isGood) {
+                        ball.alreadyHit = true; // 🚩 [3] 점수 계산 시작하자마자 true로 변경
+    
+                        if (isPerfect) {
+                            score += 10; // 요청하신 대로 Perfect 10점
+                            combo++;
+                            if(combo > maxCombo) maxCombo = combo;
+                            
+                            // 10콤보 보너스 +20점
+                            if (combo > 0 && combo % 10 === 0) {
+                                score += 20;
+                                showJudgment('COMBO BÔNUS +20!', '#ff3300');
+                            } else {
+                                showJudgment('PERFEITO!', '#fed100');
+                            }
+                        } else {
+                            score += 5; // 요청하신 대로 Good 5점
+                            // combo = 0; // (선택) 콤보 유지를 원하시면 이 줄을 주석처리 하세요.
+                            showJudgment('BOM!', '#ffffff');
+                        }
+                        
+                        // 공 튕기기 및 이펙트
+                        ball.sy = -13; 
+                        ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.2;
+                        currentDiboImg = images.hit;
+                        setTimeout(() => { if(!isGameOver) currentDiboImg = images.idle; }, 250);
+                        createParticles(ball.x, ball.y, isPerfect ? 15 : 8);
+                        updateDifficulty();
                     }
-                    updateDifficulty();
-                    ball.sy = -13; ball.sx = (ball.x - (dibo.x + dibo.w / 2)) * 0.2;
-                    currentDiboImg = images.hit;
-                    setTimeout(() => { if(!isGameOver) currentDiboImg = images.idle; }, 250);
-                    createParticles(ball.x, ball.y, isPerfect ? 15 : 8);
                 }
             }
         });
     }
 
-    canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInput(e); }, {passive: false});
-    canvas.addEventListener('mousedown', handleInput);
+    canvas.addEventListener('touchstart', (e) => { 
+        if (e.cancelable) e.preventDefault(); 
+        handleInput(e); 
+    }, {passive: false});
+    
+    canvas.addEventListener('mousedown', (e) => {
+        handleInput(e);
+    });
+    
     canvas.addEventListener('touchmove', (e) => { handleInput(e); }, {passive: false});
 
     function updateDifficulty() {
