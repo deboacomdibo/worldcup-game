@@ -45,7 +45,7 @@
 </head>
 <body>
 <div id="game-container">
-    <div id="intro-screen" class="overlay"><div class="glass-box"><h2 id="txt-intro-title">CARREGANDO...</h2><p id="txt-intro-desc">Aguarde!</p><button class="btn-play" onclick="triggerSequence('START')" id="txt-btn-play" style="display:none;">JOGAR AGORA</button></div></div>
+    <div id="intro-screen" class="overlay"><div class="glass-box"><h2 id="txt-intro-title">CARREGANDO...</h2><p id="txt-intro-desc">Aguarde!</p><button class="btn-play" onclick="triggerSequence('COMEÇAR')" id="txt-btn-play" style="display:none;">JOGAR AGORA</button></div></div>
     <div id="countdown-overlay" class="overlay"><div id="countdown-mode"></div><div id="countdown-msg">PRONTO?</div><div id="countdown-num">3</div></div>
     <div id="hud"><p id="score-board">0</p><div id="combo-board">COMBO 0</div></div>
     <div id="judgment-text"></div><canvas id="gameCanvas"></canvas>
@@ -108,7 +108,7 @@
     function triggerSequence(type) {
         gameState = 'SEQUENCE'; document.getElementById('intro-screen').style.display = 'none';
         countdownOverlay.style.display = 'flex';
-        const msg = type === 'START' ? LOCALE.msgEasy : (type === 'HARD' ? LOCALE.msgHard : LOCALE.msgExtreme);
+        const msg = type === 'COMEÇAR' ? LOCALE.msgEasy : (type === 'HARD' ? LOCALE.msgHard : LOCALE.msgExtreme);
         document.getElementById('countdown-msg').innerText = msg;
         document.getElementById('countdown-mode').innerText = type;
         document.getElementById('countdown-num').style.display = 'none';
