@@ -309,19 +309,12 @@
     }
     async function showRankingBoard() {
         document.getElementById('modal-rank-board').style.display = 'flex';
-        const body = document.getElementById('rank-list-body');
-        body.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
-    
+        const body = document.getElementById('rank-list-body'); body.innerHTML = "<tr><td colspan='4'>Carregando...</td></tr>";
         try {
-            // 🚩 URL 뒤에 현재 시간을 붙여서 캐시를 무력화합니다.
-            const resp = await fetch(scriptUrl + "?t=" + new Date().getTime()); 
-            const ranks = await resp.json();
-            
-            body.innerHTML = "";
-            // ... (나머지 출력 로직은 동일)
-        } catch (e) {
-            body.innerHTML = "<tr><td colspan='4'>Erro.</td></tr>";
-        }
+            const resp = await fetch(scriptUrl + "?t=" + new Date().getTime()); const ranks = await resp.json();
+            body.innerHTML = ""; if (ranks.length === 0) { body.innerHTML = "<tr><td colspan='4'>Vazio!</td></tr>"; return; }
+            ranks.forEach((row, idx) => { if(idx >= 50) return; const tr = document.createElement('tr'); if(idx === 0) tr.style.backgroundColor = "rgba(254, 209, 0, 0.1)"; const medal = idx === 0 ? "🥇" : idx === 1 ? "🥈" : idx === 2 ? "🥉" : idx + 1; tr.innerHTML = `<td>${medal}</td><td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td>`; body.innerHTML += tr.outerHTML; });
+        } catch (e) { body.innerHTML = "<tr><td colspan='4'>Erro.</td></tr>"; }
     }
     async function logInstagramClick() {
         const data = { 
